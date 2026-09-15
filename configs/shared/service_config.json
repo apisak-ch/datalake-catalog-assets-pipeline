@@ -1,0 +1,39 @@
+{
+  "services": [
+    {
+      "kind": "messaging",
+      "name": "kafka",
+      "description": "Manual messaging service for tracking Kafka topics, no live connector"
+    },
+    {
+      "kind": "database",
+      "name": "hbase",
+      "description": "Manual database service for tracking HBase tables, no live connector"
+    },
+    {
+      "kind": "pipeline",
+      "name": "k8s-application",
+      "description": "Manual pipeline service for tracking online/streaming k8s consumer apps, no live connector"
+    },
+    {
+      "kind": "pipeline",
+      "name": "airflow",
+      "description": "Manual pipeline service for tracking batch Airflow DAGs, no live connector"
+    },
+    {
+      "kind": "storage",
+      "name": "hdfs",
+      "description": "Manual storage service for tracking HDFS files/zones, no live connector"
+    },
+    {
+      "kind": "database",
+      "name": "hive",
+      "description": "Manual database service for tracking Hive tables, no live connector"
+    },
+    {
+      "kind": "storage",
+      "name": "ftp",
+      "description": "Manual storage service for tracking FTP-delivered source files, no live connector"
+    }
+  ]
+}
