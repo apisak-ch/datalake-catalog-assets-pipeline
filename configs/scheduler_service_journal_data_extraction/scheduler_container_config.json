@@ -1,0 +1,601 @@
+{
+  "service": "hdfs",
+  "containers": [
+    {
+      "name": "prod",
+      "prefix": "/prod/",
+      "description": "Root of the prod HDFS environment."
+    },
+    {
+      "name": "cleansed",
+      "parentName": "prod",
+      "prefix": "/prod/cleansed/",
+      "description": "Cleansed zone."
+    },
+    {
+      "name": "datalake",
+      "parentName": "cleansed",
+      "prefix": "/prod/cleansed/datalake/",
+      "description": "Datalake job outputs, grouped by job name."
+    },
+    {
+      "name": "scheduler_service_journal_data_extraction",
+      "parentName": "datalake",
+      "prefix": "/prod/cleansed/datalake/scheduler_service_journal_data_extraction/",
+      "description": "Output files from the scheduler_service_journal_data_extraction Airflow DAG. Files land under a daily YYYYMMDD subfolder, e.g. 20260907/."
+    },
+    {
+      "name": "schedule_action_output",
+      "parentName": "scheduler_service_journal_data_extraction",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "Straight HBase extraction of schedule-action, no transform. One file per day: schedule_action_output_<yyyy-mm-dd>.csv, e.g. schedule_action_output_2026-09-07.csv.",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "x_request_id",
+            "dataType": "STRING",
+            "description": "Cross-system request identifier"
+          },
+          {
+            "name": "x_job_id",
+            "dataType": "STRING",
+            "description": "Cross-system job identifier"
+          },
+          {
+            "name": "running_date",
+            "dataType": "DATE",
+            "description": "Date the action actually ran"
+          },
+          {
+            "name": "execution_time_id",
+            "dataType": "STRING",
+            "description": "Identifier for the scheduled execution time slot"
+          },
+          {
+            "name": "customer_id",
+            "dataType": "STRING",
+            "description": "Customer identifier"
+          },
+          {
+            "name": "service_id",
+            "dataType": "STRING",
+            "description": "Identifier for the scheduled service instance"
+          },
+          {
+            "name": "chrono_sequence_journal",
+            "dataType": "STRING",
+            "description": "Chronological sequence journal identifier"
+          },
+          {
+            "name": "action",
+            "dataType": "STRING",
+            "description": "Action type/status code, e.g. C (created), U (updated)"
+          },
+          {
+            "name": "new_service_name",
+            "dataType": "STRING",
+            "description": "Name of the downstream service invoked, e.g. ACCOUNT"
+          },
+          {
+            "name": "new_status",
+            "dataType": "STRING",
+            "description": "Current status of the action, e.g. pending, done"
+          },
+          {
+            "name": "new_execution_start_datetime",
+            "dataType": "TIMESTAMPZ",
+            "description": "Timestamp execution started, with timezone offset"
+          },
+          {
+            "name": "new_execution_finish_datetime",
+            "dataType": "TIMESTAMPZ",
+            "description": "Timestamp execution finished, with timezone offset"
+          },
+          {
+            "name": "new_effective_date",
+            "dataType": "DATE",
+            "description": "Effective date for the (re)scheduled action"
+          },
+          {
+            "name": "new_result",
+            "dataType": "STRING",
+            "description": "Execution result, e.g. fail"
+          },
+          {
+            "name": "new_error_code",
+            "dataType": "STRING",
+            "description": "Error code returned on failure"
+          },
+          {
+            "name": "new_error_desc",
+            "dataType": "STRING",
+            "description": "Error description returned on failure"
+          },
+          {
+            "name": "new_thread",
+            "dataType": "INT",
+            "description": "Thread/worker count or identifier handling the action"
+          },
+          {
+            "name": "new_chronological_sequence",
+            "dataType": "STRING",
+            "description": "Updated chronological sequence value"
+          },
+          {
+            "name": "new_execution_count",
+            "dataType": "INT",
+            "description": "Number of times this action has been executed"
+          },
+          {
+            "name": "new_transaction_job_id",
+            "dataType": "STRING",
+            "description": "Job identifier for the underlying transaction"
+          },
+          {
+            "name": "new_system_note",
+            "dataType": "STRING",
+            "description": "Free-text system note, often empty"
+          },
+          {
+            "name": "new_is_timeout",
+            "dataType": "BOOLEAN",
+            "description": "Whether the action timed out"
+          },
+          {
+            "name": "new_elapsed_time",
+            "dataType": "INT",
+            "description": "Elapsed execution time in milliseconds"
+          },
+          {
+            "name": "last_updated_datetime",
+            "dataType": "TIMESTAMPZ",
+            "description": "Timestamp this record was last updated, with timezone offset"
+          },
+          {
+            "name": "last_updated_description",
+            "dataType": "STRING",
+            "description": "Free-text description of the last update event"
+          },
+          {
+            "name": "last_updated_user_id",
+            "dataType": "STRING",
+            "description": "User or system that performed the last update, e.g. INTERNAL"
+          },
+          {
+            "name": "last_updated_other_info",
+            "dataType": "JSON",
+            "description": "Additional structured info about the last update"
+          }
+        ]
+      }
+    },
+    {
+      "name": "schedule_setting_output_preparation_safe",
+      "parentName": "scheduler_service_journal_data_extraction",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "Hashed 'safe' variant of the fraud-prep output for schedule-setting. One file per day: schedule_setting_output_preparation_safe_<yyyy-mm-dd>.csv.",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "x_request_id",
+            "dataType": "STRING",
+            "description": "Cross-system request identifier"
+          },
+          {
+            "name": "x_job_id",
+            "dataType": "STRING",
+            "description": "Cross-system job identifier"
+          },
+          {
+            "name": "customer_id",
+            "dataType": "STRING",
+            "description": "Customer identifier"
+          },
+          {
+            "name": "service_id",
+            "dataType": "STRING",
+            "description": "Identifier for the scheduled service instance"
+          },
+          {
+            "name": "chrono_sequence_journal",
+            "dataType": "STRING",
+            "description": "Chronological sequence journal identifier"
+          },
+          {
+            "name": "action",
+            "dataType": "STRING",
+            "description": "Action type/status code"
+          },
+          {
+            "name": "new_service_name",
+            "dataType": "STRING",
+            "description": "Name of the downstream service invoked, e.g. ACCOUNT"
+          },
+          {
+            "name": "new_amount",
+            "dataType": "DECIMAL",
+            "dataTypeDisplay": "decimal(18,2)",
+            "precision": 18,
+            "scale": 2,
+            "description": "Scheduled transaction amount (from the CDC event)"
+          },
+          {
+            "name": "new_service_type",
+            "dataType": "STRING",
+            "description": "Type of service action, e.g. ACTION"
+          },
+          {
+            "name": "new_create_datetime",
+            "dataType": "TIMESTAMPZ",
+            "description": "Timestamp the schedule was created, with timezone offset"
+          },
+          {
+            "name": "new_frequency",
+            "dataType": "STRING",
+            "description": "Recurrence frequency, e.g. ONCE"
+          },
+          {
+            "name": "new_execution_date",
+            "dataType": "DATE",
+            "description": "Date the scheduled action is set to execute"
+          },
+          {
+            "name": "new_execution_day",
+            "dataType": "STRING",
+            "description": "Day-of-week/month the action executes, if recurring"
+          },
+          {
+            "name": "new_execution_time_id",
+            "dataType": "STRING",
+            "description": "Identifier for the scheduled execution time slot"
+          },
+          {
+            "name": "new_start_date",
+            "dataType": "DATE",
+            "description": "Start date of the recurring schedule"
+          },
+          {
+            "name": "new_end_date",
+            "dataType": "DATE",
+            "description": "End date of the recurring schedule"
+          },
+          {
+            "name": "new_is_monthend",
+            "dataType": "BOOLEAN",
+            "description": "Whether this schedule is tied to month-end"
+          },
+          {
+            "name": "new_note_category",
+            "dataType": "STRING",
+            "description": "Category of the note"
+          },
+          {
+            "name": "new_note",
+            "dataType": "STRING",
+            "description": "Free-text note on the schedule"
+          },
+          {
+            "name": "new_selected_hashtag",
+            "dataType": "JSON",
+            "description": "Hashtag(s) selected by the customer"
+          },
+          {
+            "name": "new_suggested_hashtag",
+            "dataType": "JSON",
+            "description": "List of suggested transaction hashtags with their suggestion model"
+          },
+          {
+            "name": "last_updated_job_id",
+            "dataType": "STRING",
+            "description": "Job identifier for the last update"
+          },
+          {
+            "name": "last_updated_datetime",
+            "dataType": "TIMESTAMPZ",
+            "description": "Timestamp this record was last updated, with timezone offset"
+          },
+          {
+            "name": "last_updated_description",
+            "dataType": "STRING",
+            "description": "Free-text description of the last update event"
+          },
+          {
+            "name": "last_updated_user_id",
+            "dataType": "STRING",
+            "description": "User or system that performed the last update"
+          },
+          {
+            "name": "last_updated_other_info",
+            "dataType": "JSON",
+            "description": "Additional structured info about the last update"
+          },
+          {
+            "name": "account_from",
+            "dataType": "STRING",
+            "description": "Source account number. Flattened out of the HBase new_data JSON payload."
+          },
+          {
+            "name": "account_to",
+            "dataType": "STRING",
+            "description": "Destination account number. Flattened out of the HBase new_data JSON payload."
+          },
+          {
+            "name": "account_to_bank_code",
+            "dataType": "STRING",
+            "description": "Destination bank code"
+          },
+          {
+            "name": "method_type",
+            "dataType": "STRING",
+            "description": "Transaction method type code"
+          },
+          {
+            "name": "account_to_name_th",
+            "dataType": "STRING",
+            "description": "Destination account holder name (Thai)"
+          },
+          {
+            "name": "account_to_name_en",
+            "dataType": "STRING",
+            "description": "Destination account holder name (English)"
+          },
+          {
+            "name": "proxy_type",
+            "dataType": "STRING",
+            "description": "PromptPay proxy type, if applicable"
+          },
+          {
+            "name": "proxy_value",
+            "dataType": "STRING",
+            "description": "PromptPay proxy value, if applicable"
+          },
+          {
+            "name": "account_from_name",
+            "dataType": "STRING",
+            "description": "Source account holder name"
+          },
+          {
+            "name": "account_group",
+            "dataType": "STRING",
+            "description": "Account grouping/classification derived by the fraud-prep job"
+          },
+          {
+            "name": "amount",
+            "dataType": "DECIMAL",
+            "dataTypeDisplay": "decimal(18,2)",
+            "precision": 18,
+            "scale": 2,
+            "description": "Transaction amount as parsed for the fraud model (from new_data)"
+          },
+          {
+            "name": "lat",
+            "dataType": "STRING",
+            "description": "Transaction latitude, often empty. Kept as STRING to match the source JSON's string typing."
+          },
+          {
+            "name": "long",
+            "dataType": "STRING",
+            "description": "Transaction longitude, often empty. Kept as STRING to match the source JSON's string typing."
+          }
+        ]
+      }
+    },
+    {
+      "name": "schedule_setting_output_preparation_unsafe",
+      "parentName": "scheduler_service_journal_data_extraction",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "Padded 'unsafe' variant of the fraud-prep output for schedule-setting. One file per day: schedule_setting_output_preparation_unsafe_<yyyy-mm-dd>.csv.",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "x_request_id",
+            "dataType": "STRING",
+            "description": "Cross-system request identifier"
+          },
+          {
+            "name": "x_job_id",
+            "dataType": "STRING",
+            "description": "Cross-system job identifier"
+          },
+          {
+            "name": "customer_id",
+            "dataType": "STRING",
+            "description": "Customer identifier"
+          },
+          {
+            "name": "service_id",
+            "dataType": "STRING",
+            "description": "Identifier for the scheduled service instance"
+          },
+          {
+            "name": "chrono_sequence_journal",
+            "dataType": "STRING",
+            "description": "Chronological sequence journal identifier"
+          },
+          {
+            "name": "action",
+            "dataType": "STRING",
+            "description": "Action type/status code"
+          },
+          {
+            "name": "new_service_name",
+            "dataType": "STRING",
+            "description": "Name of the downstream service invoked, e.g. ACCOUNT"
+          },
+          {
+            "name": "new_amount",
+            "dataType": "DECIMAL",
+            "dataTypeDisplay": "decimal(18,2)",
+            "precision": 18,
+            "scale": 2,
+            "description": "Scheduled transaction amount (from the CDC event)"
+          },
+          {
+            "name": "new_service_type",
+            "dataType": "STRING",
+            "description": "Type of service action, e.g. ACTION"
+          },
+          {
+            "name": "new_create_datetime",
+            "dataType": "TIMESTAMPZ",
+            "description": "Timestamp the schedule was created, with timezone offset"
+          },
+          {
+            "name": "new_frequency",
+            "dataType": "STRING",
+            "description": "Recurrence frequency, e.g. ONCE"
+          },
+          {
+            "name": "new_execution_date",
+            "dataType": "DATE",
+            "description": "Date the scheduled action is set to execute"
+          },
+          {
+            "name": "new_execution_day",
+            "dataType": "STRING",
+            "description": "Day-of-week/month the action executes, if recurring"
+          },
+          {
+            "name": "new_execution_time_id",
+            "dataType": "STRING",
+            "description": "Identifier for the scheduled execution time slot"
+          },
+          {
+            "name": "new_start_date",
+            "dataType": "DATE",
+            "description": "Start date of the recurring schedule"
+          },
+          {
+            "name": "new_end_date",
+            "dataType": "DATE",
+            "description": "End date of the recurring schedule"
+          },
+          {
+            "name": "new_is_monthend",
+            "dataType": "BOOLEAN",
+            "description": "Whether this schedule is tied to month-end"
+          },
+          {
+            "name": "new_note_category",
+            "dataType": "STRING",
+            "description": "Category of the note"
+          },
+          {
+            "name": "new_note",
+            "dataType": "STRING",
+            "description": "Free-text note on the schedule"
+          },
+          {
+            "name": "new_selected_hashtag",
+            "dataType": "JSON",
+            "description": "Hashtag(s) selected by the customer"
+          },
+          {
+            "name": "new_suggested_hashtag",
+            "dataType": "JSON",
+            "description": "List of suggested transaction hashtags with their suggestion model"
+          },
+          {
+            "name": "last_updated_job_id",
+            "dataType": "STRING",
+            "description": "Job identifier for the last update"
+          },
+          {
+            "name": "last_updated_datetime",
+            "dataType": "TIMESTAMPZ",
+            "description": "Timestamp this record was last updated, with timezone offset"
+          },
+          {
+            "name": "last_updated_description",
+            "dataType": "STRING",
+            "description": "Free-text description of the last update event"
+          },
+          {
+            "name": "last_updated_user_id",
+            "dataType": "STRING",
+            "description": "User or system that performed the last update"
+          },
+          {
+            "name": "last_updated_other_info",
+            "dataType": "JSON",
+            "description": "Additional structured info about the last update"
+          },
+          {
+            "name": "account_from",
+            "dataType": "STRING",
+            "description": "Source account number. Flattened out of the HBase new_data JSON payload."
+          },
+          {
+            "name": "account_to",
+            "dataType": "STRING",
+            "description": "Destination account number. Flattened out of the HBase new_data JSON payload."
+          },
+          {
+            "name": "account_to_bank_code",
+            "dataType": "STRING",
+            "description": "Destination bank code"
+          },
+          {
+            "name": "method_type",
+            "dataType": "STRING",
+            "description": "Transaction method type code"
+          },
+          {
+            "name": "account_to_name_th",
+            "dataType": "STRING",
+            "description": "Destination account holder name (Thai)"
+          },
+          {
+            "name": "account_to_name_en",
+            "dataType": "STRING",
+            "description": "Destination account holder name (English)"
+          },
+          {
+            "name": "proxy_type",
+            "dataType": "STRING",
+            "description": "PromptPay proxy type, if applicable"
+          },
+          {
+            "name": "proxy_value",
+            "dataType": "STRING",
+            "description": "PromptPay proxy value, if applicable"
+          },
+          {
+            "name": "account_from_name",
+            "dataType": "STRING",
+            "description": "Source account holder name"
+          },
+          {
+            "name": "account_group",
+            "dataType": "STRING",
+            "description": "Account grouping/classification derived by the fraud-prep job"
+          },
+          {
+            "name": "amount",
+            "dataType": "DECIMAL",
+            "dataTypeDisplay": "decimal(18,2)",
+            "precision": 18,
+            "scale": 2,
+            "description": "Transaction amount as parsed for the fraud model (from new_data)"
+          },
+          {
+            "name": "lat",
+            "dataType": "STRING",
+            "description": "Transaction latitude, often empty. Kept as STRING to match the source JSON's string typing."
+          },
+          {
+            "name": "long",
+            "dataType": "STRING",
+            "description": "Transaction longitude, often empty. Kept as STRING to match the source JSON's string typing."
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,470 @@
+{
+  "service": "hive",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod_safe_schedule_transfer",
+          "tables": [
+            {
+              "name": "schedule_action",
+              "columns": [
+                {
+                  "name": "x_request_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "x_job_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "running_date",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "execution_time_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "service_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "chrono_sequence_journal",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "action",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_service_name",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_status",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_execution_start_datetime",
+                  "dataType": "TIMESTAMP"
+                },
+                {
+                  "name": "new_execution_finish_datetime",
+                  "dataType": "TIMESTAMP"
+                },
+                {
+                  "name": "new_effective_date",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_result",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_error_code",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_error_desc",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_thread",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_chronological_sequence",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_execution_count",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_transaction_job_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_system_note",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_is_timeout",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_elapsed_time",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_datetime",
+                  "dataType": "TIMESTAMP"
+                },
+                {
+                  "name": "last_updated_description",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_user_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_other_info",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column"
+                }
+              ]
+            },
+            {
+              "name": "schedule_setting",
+              "columns": [
+                {
+                  "name": "x_request_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "x_job_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "service_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "chrono_sequence_journal",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "action",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_service_name",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_amount",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_service_type",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_create_datetime",
+                  "dataType": "TIMESTAMP"
+                },
+                {
+                  "name": "new_frequency",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_execution_date",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_execution_day",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_execution_time_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_start_date",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_end_date",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_is_monthend",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_note_category",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_note",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_selected_hashtag",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_suggested_hashtag",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_job_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_datetime",
+                  "dataType": "TIMESTAMP"
+                },
+                {
+                  "name": "last_updated_description",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_user_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_other_info",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_from",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_to",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_to_bank_code",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "method_type",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_to_name_th",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_to_name_en",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "proxy_type",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "proxy_value",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_from_name",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_group",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "amount",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "lat",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "long",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "prod_unsafe_schedule_transfer",
+          "tables": [
+            {
+              "name": "schedule_setting",
+              "columns": [
+                {
+                  "name": "x_request_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "x_job_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "service_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "chrono_sequence_journal",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "action",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_service_name",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_amount",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_service_type",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_create_datetime",
+                  "dataType": "TIMESTAMP"
+                },
+                {
+                  "name": "new_frequency",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_execution_date",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_execution_day",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_execution_time_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_start_date",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_end_date",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_is_monthend",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_note_category",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_note",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_selected_hashtag",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "new_suggested_hashtag",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_job_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_datetime",
+                  "dataType": "TIMESTAMP"
+                },
+                {
+                  "name": "last_updated_description",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_user_id",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "last_updated_other_info",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_from",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_to",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_to_bank_code",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "method_type",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_to_name_th",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_to_name_en",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "proxy_type",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "proxy_value",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_from_name",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "account_group",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "amount",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "lat",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "long",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

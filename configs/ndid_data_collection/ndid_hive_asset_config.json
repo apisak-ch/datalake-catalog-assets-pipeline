@@ -1,0 +1,328 @@
+{
+  "service": "hive",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod_safe_mymo",
+          "tables": [
+            {
+              "name": "ndid_customer_journey",
+              "description": "Customer journey/activity log for the NDID enrollment flow. Data date T-1.",
+              "columns": [
+                {
+                  "name": "action_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "Current datetime of the log"
+                },
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING",
+                  "description": "Customer ID of customer who did the action, optional in deeplink flow"
+                },
+                {
+                  "name": "mymo_user_id",
+                  "dataType": "STRING",
+                  "description": "MyMo user ID, present only after login"
+                },
+                {
+                  "name": "activity_code",
+                  "dataType": "STRING",
+                  "description": "Activity code (e.g. NDID_NTL_01, NDID_DL_03), see Business Scenarios docs"
+                },
+                {
+                  "name": "activity_name",
+                  "dataType": "STRING",
+                  "description": "Activity name (e.g. NDID_NOTI_LIST_VIEW)"
+                },
+                {
+                  "name": "details",
+                  "dataType": "STRING",
+                  "description": "JSON string of extra detail sent by the frontend, e.g. {\"popup_code\":\"xxxx\",\"ndid_status\":\"xxxx\",\"can_uplift\":\"xxxx\"}. Empty {} when nothing to send."
+                },
+                {
+                  "name": "device",
+                  "dataType": "STRING",
+                  "description": "Device model, from standard vipera header"
+                },
+                {
+                  "name": "os",
+                  "dataType": "STRING",
+                  "description": "OS name, from standard vipera header"
+                },
+                {
+                  "name": "os_version",
+                  "dataType": "STRING",
+                  "description": "OS version, from standard vipera header"
+                },
+                {
+                  "name": "mymo_version",
+                  "dataType": "STRING",
+                  "description": "MyMo app version, from standard vipera header"
+                },
+                {
+                  "name": "session_id",
+                  "dataType": "STRING",
+                  "description": "Session identifier, logged by vipera"
+                },
+                {
+                  "name": "server_id",
+                  "dataType": "STRING",
+                  "description": "Server identifier, logged by vipera"
+                },
+                {
+                  "name": "client_ip",
+                  "dataType": "STRING",
+                  "description": "Client IP address, logged by vipera"
+                },
+                {
+                  "name": "ndid_status",
+                  "dataType": "STRING",
+                  "description": "NDID enrollment status, 0-4 (2=pending, 3=enrolled, 4=cancelling), see Business Scenarios docs"
+                },
+                {
+                  "name": "can_uplift",
+                  "dataType": "STRING",
+                  "description": "Whether the customer can uplift via face recognition (IAL upgrade path)"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column, T-1 data date"
+                }
+              ]
+            },
+            {
+              "name": "ndid_idp_request_log",
+              "description": "IDP (identity provider) request state log for NDID. Data date T-1.",
+              "columns": [
+                {
+                  "name": "action_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "Current datetime of the log"
+                },
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING",
+                  "description": "Customer ID of customer who did the action"
+                },
+                {
+                  "name": "mymo_user_id",
+                  "dataType": "STRING",
+                  "description": "MyMo user ID"
+                },
+                {
+                  "name": "citizen_id",
+                  "dataType": "STRING",
+                  "description": "Citizen ID"
+                },
+                {
+                  "name": "application_type",
+                  "dataType": "STRING",
+                  "description": "Application type; always \"3\" for IDP, no other observed value"
+                },
+                {
+                  "name": "application_no",
+                  "dataType": "STRING",
+                  "description": "NDID application number"
+                },
+                {
+                  "name": "application_state",
+                  "dataType": "STRING",
+                  "description": "State sent by ekyc on request: IDP_CREATED, IDP_REJECTED, IDP_TIMEDOUT, IDP_CANCEL, IDP_COMPLETED"
+                },
+                {
+                  "name": "requestor_node_id",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: requestor node ID"
+                },
+                {
+                  "name": "requestor_node_description",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: requestor node description"
+                },
+                {
+                  "name": "application_request_timestamp",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: request timestamp"
+                },
+                {
+                  "name": "application_creation_time",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: creation time"
+                },
+                {
+                  "name": "application_request_timeout",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: request timeout"
+                },
+                {
+                  "name": "application_last_update_datetime",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: last update datetime"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column, T-1 data date"
+                }
+              ]
+            },
+            {
+              "name": "ndid_unenroll_log",
+              "description": "NDID unenrollment activity log. Data date T-1.",
+              "columns": [
+                {
+                  "name": "action_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "Current datetime of the log"
+                },
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING",
+                  "description": "Customer ID of customer who did the action"
+                },
+                {
+                  "name": "mymo_user_id",
+                  "dataType": "STRING",
+                  "description": "MyMo user ID"
+                },
+                {
+                  "name": "operation",
+                  "dataType": "STRING",
+                  "description": "createUnenrollAppform or submitUnenroll"
+                },
+                {
+                  "name": "application_no",
+                  "dataType": "STRING"
+                },
+                {
+                  "name": "device",
+                  "dataType": "STRING",
+                  "description": "Device model, from standard vipera header"
+                },
+                {
+                  "name": "os",
+                  "dataType": "STRING",
+                  "description": "OS name, from standard vipera header"
+                },
+                {
+                  "name": "os_version",
+                  "dataType": "STRING",
+                  "description": "OS version, from standard vipera header"
+                },
+                {
+                  "name": "mymo_version",
+                  "dataType": "STRING",
+                  "description": "MyMo app version, from standard vipera header"
+                },
+                {
+                  "name": "session_id",
+                  "dataType": "STRING",
+                  "description": "Session identifier, logged by vipera"
+                },
+                {
+                  "name": "server_id",
+                  "dataType": "STRING",
+                  "description": "Server identifier, logged by vipera"
+                },
+                {
+                  "name": "client_ip",
+                  "dataType": "STRING",
+                  "description": "Client IP address, logged by vipera"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column, T-1 data date"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "prod_unsafe_mymo",
+          "tables": [
+            {
+              "name": "ndid_idp_request_log",
+              "description": "IDP (identity provider) request state log for NDID -- unsafe/unmasked variant. Data date T-1.",
+              "columns": [
+                {
+                  "name": "action_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "Current datetime of the log"
+                },
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING",
+                  "description": "Customer ID of customer who did the action"
+                },
+                {
+                  "name": "mymo_user_id",
+                  "dataType": "STRING",
+                  "description": "MyMo user ID"
+                },
+                {
+                  "name": "citizen_id",
+                  "dataType": "STRING",
+                  "description": "Citizen ID"
+                },
+                {
+                  "name": "application_type",
+                  "dataType": "STRING",
+                  "description": "Application type; always \"3\" for IDP, no other observed value"
+                },
+                {
+                  "name": "application_no",
+                  "dataType": "STRING",
+                  "description": "NDID application number"
+                },
+                {
+                  "name": "application_state",
+                  "dataType": "STRING",
+                  "description": "State sent by ekyc on request: IDP_CREATED, IDP_REJECTED, IDP_TIMEDOUT, IDP_CANCEL, IDP_COMPLETED"
+                },
+                {
+                  "name": "requestor_node_id",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: requestor node ID"
+                },
+                {
+                  "name": "requestor_node_description",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: requestor node description"
+                },
+                {
+                  "name": "application_request_timestamp",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: request timestamp"
+                },
+                {
+                  "name": "application_creation_time",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: creation time"
+                },
+                {
+                  "name": "application_request_timeout",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: request timeout"
+                },
+                {
+                  "name": "application_last_update_datetime",
+                  "dataType": "STRING",
+                  "description": "Forwarded from MyMo NDID application: last update datetime"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column, T-1 data date"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

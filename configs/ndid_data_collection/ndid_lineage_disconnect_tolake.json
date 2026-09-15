@@ -1,0 +1,19 @@
+{
+  "edges": [
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "ftp.data.prod.file.mymo.ToLAKE"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.raw.vipera.ndid_data_collection_raw"
+      },
+      "description": "Folder-level edge for impact analysis: shows which pipeline(s) depend on this shared FTP drop location, without needing to check every individual file. ToLAKE is shared across multiple projects -- more such edges should be added here as other projects' pipelines are onboarded.",
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.ndid_data_collection"
+      }
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "edges": [
+    {
+      "fromEntity": {
+        "type": "topic",
+        "fqn": "kafka.\"scheduler.scheduler.schedule-journal\""
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hbase.prod.prod.schedule-action"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "k8s-application.prod-dlake-schedule-action"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "topic",
+        "fqn": "kafka.\"scheduler.scheduler.customer-service-journal\""
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hbase.prod.prod.schedule-setting"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "k8s-application.prod-dlake-schedule-setting"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hbase.prod.prod.schedule-action"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.datalake.scheduler_service_journal_data_extraction.schedule_action_output"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.scheduler_service_journal_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hbase.prod.prod.schedule-setting"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.datalake.scheduler_service_journal_data_extraction.schedule_setting_output_preparation_safe"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.scheduler_service_journal_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hbase.prod.prod.schedule-setting"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.datalake.scheduler_service_journal_data_extraction.schedule_setting_output_preparation_unsafe"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.scheduler_service_journal_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.datalake.scheduler_service_journal_data_extraction.schedule_action_output"
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_schedule_transfer.schedule_action"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.scheduler_service_journal_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.datalake.scheduler_service_journal_data_extraction.schedule_setting_output_preparation_safe"
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_schedule_transfer.schedule_setting"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.scheduler_service_journal_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.datalake.scheduler_service_journal_data_extraction.schedule_setting_output_preparation_unsafe"
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_unsafe_schedule_transfer.schedule_setting"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.scheduler_service_journal_data_extraction"
+      }
+    }
+  ]
+}

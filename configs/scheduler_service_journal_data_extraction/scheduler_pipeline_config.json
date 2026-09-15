@@ -1,0 +1,16 @@
+{
+  "pipelines": [
+    {
+      "service": "k8s-application",
+      "name": "prod-dlake-schedule-action",
+      "displayName": "prod-dlake-schedule-action",
+      "description": "Consumes the schedule-journal Kafka topic and writes records into the HBase schedule-action table."
+    },
+    {
+      "service": "k8s-application",
+      "name": "prod-dlake-schedule-setting",
+      "displayName": "prod-dlake-schedule-setting",
+      "description": "Consumes the customer-service-journal Kafka topic and writes records into the HBase schedule-setting table."
+    }
+  ]
+}

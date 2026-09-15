@@ -1,0 +1,12 @@
+{
+  "pipelines": [
+    {
+      "service": "airflow",
+      "name": "ndid_data_collection",
+      "displayName": "NDID Data Collection",
+      "description": "Daily (T-1) pipeline collecting 3 NDID-related files from FTP (ndid_customer_journey, ndid_idp_request_log, ndid_unenroll_log). Validates checksums, stores raw copies to HDFS raw zone, then runs ETL in parallel per file: a Spark job for ndid_customer_journey, a safe/unsafe split for ndid_idp_request_log, and a straight passthrough for ndid_unenroll_log (no processing). Outputs land in the HDFS cleansed zone, are copied to the HDFS gold_safe zone, then loaded into Hive (prod_safe_mymo and prod_unsafe_mymo).",
+      "sourceUrl": "http://10.82.100.194:8085/dags/ndid_data_collection/graph",
+      "scheduleInterval": "5 4 * * *"
+    }
+  ]
+}

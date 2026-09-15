@@ -1,0 +1,213 @@
+{
+  "service": "hbase",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod",
+          "tables": [
+            {
+              "name": "schedule-action",
+              "description": "HBase table tracking scheduled/executed actions. Uses two row key shapes: an hour-bucket index row (<yyyy-mm-dd_hh>) and a per-action detail row (<cif>_<chrono_sequence_journal>_<yyyy-mm-dd>_<execution_time_id>).",
+              "columns": [
+                {
+                  "name": "rowkey",
+                  "dataType": "STRUCT",
+                  "description": "Row key can take one of two shapes, each nested below with the column family that applies to it.",
+                  "children": [
+                    {
+                      "name": "yyyy-mm-dd_hh",
+                      "displayName": "{yyyy}-{mm}-{dd}_{hh}",
+                      "dataType": "STRUCT",
+                      "description": "Index-row shape, e.g. 2026-08-24_14",
+                      "children": [
+                        {
+                          "name": "index",
+                          "dataType": "STRUCT",
+                          "description": "Column family on hour-bucket index rows. Each qualifier points to a detail row in the info family.",
+                          "children": [
+                            {
+                              "name": "qualifier",
+                              "dataType": "STRUCT",
+                              "description": "The qualifier itself is the pointer -- it contains the row key needed to look up the matching detail row in the info family.",
+                              "children": [
+                                {
+                                  "name": "cif_chrono_sequence_journal_yyyy-mm-dd_execution_time_id",
+                                  "displayName": "{cif}_{chrono_sequence_journal}_{yyyy}-{mm}-{dd}_{execution_time_id}",
+                                  "dataType": "STRING",
+                                  "description": "Row key of the corresponding detail row in the info family, e.g. 16278_260716112458323023093001A_2026-07-17_01"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "cif_chrono_sequence_journal_yyyy-mm-dd_execution_time_id",
+                      "displayName": "{cif}_{chrono_sequence_journal}_{yyyy}-{mm}-{dd}_{execution_time_id}",
+                      "dataType": "STRUCT",
+                      "description": "Detail-row shape, e.g. 16278_260716112458323023093001A_2026-07-17_01",
+                      "children": [
+                        {
+                          "name": "info",
+                          "dataType": "STRUCT",
+                          "description": "Column family on detail rows.",
+                          "children": [
+                            {
+                              "name": "qualifier",
+                              "dataType": "STRUCT",
+                              "description": "Real HBase qualifiers are compound (<date>|<unique_record_id>|<field_name>) so each qualifier string is unique per record; the field names below are the known/recurring business attributes extracted from that qualifier. Some fields (the execution-result ones) only appear once an action has finished running, not while it's still pending.",
+                              "children": [
+                                {
+                                  "name": "action",
+                                  "dataType": "STRING",
+                                  "description": "Action type/status code, e.g. C (created), U (updated)"
+                                },
+                                {
+                                  "name": "chrono_sequence_journal",
+                                  "dataType": "STRING",
+                                  "description": "Chronological sequence journal identifier"
+                                },
+                                {
+                                  "name": "customer_id",
+                                  "dataType": "STRING",
+                                  "description": "Customer identifier (matches cif in the row key)"
+                                },
+                                {
+                                  "name": "execution_time_id",
+                                  "dataType": "STRING",
+                                  "description": "Identifier for the scheduled execution time slot"
+                                },
+                                {
+                                  "name": "last_updated_datetime",
+                                  "dataType": "TIMESTAMPZ",
+                                  "description": "Timestamp this record was last updated, with timezone offset"
+                                },
+                                {
+                                  "name": "last_updated_description",
+                                  "dataType": "STRING",
+                                  "description": "Free-text description of the last update event (e.g. originating API call)"
+                                },
+                                {
+                                  "name": "last_updated_other_info",
+                                  "dataType": "JSON",
+                                  "description": "Additional structured info about the last update"
+                                },
+                                {
+                                  "name": "last_updated_user_id",
+                                  "dataType": "STRING",
+                                  "description": "User or system that performed the last update, e.g. INTERNAL"
+                                },
+                                {
+                                  "name": "new_chronological_sequence",
+                                  "dataType": "STRING",
+                                  "description": "Updated chronological sequence value"
+                                },
+                                {
+                                  "name": "new_effective_date",
+                                  "dataType": "DATE",
+                                  "description": "Effective date for the (re)scheduled action"
+                                },
+                                {
+                                  "name": "new_execution_count",
+                                  "dataType": "INT",
+                                  "description": "Number of times this action has been executed"
+                                },
+                                {
+                                  "name": "new_is_timeout",
+                                  "dataType": "BOOLEAN",
+                                  "description": "Whether the action timed out"
+                                },
+                                {
+                                  "name": "new_service_name",
+                                  "dataType": "STRING",
+                                  "description": "Name of the downstream service invoked, e.g. ACCOUNT"
+                                },
+                                {
+                                  "name": "new_status",
+                                  "dataType": "STRING",
+                                  "description": "Current status of the action, e.g. pending, done"
+                                },
+                                {
+                                  "name": "new_system_note",
+                                  "dataType": "STRING",
+                                  "description": "Free-text system note, often empty"
+                                },
+                                {
+                                  "name": "new_thread",
+                                  "dataType": "INT",
+                                  "description": "Thread/worker count or identifier handling the action"
+                                },
+                                {
+                                  "name": "new_transaction_job_id",
+                                  "dataType": "STRING",
+                                  "description": "Job identifier for the underlying transaction"
+                                },
+                                {
+                                  "name": "running_date",
+                                  "dataType": "DATE",
+                                  "description": "Date the action actually ran"
+                                },
+                                {
+                                  "name": "service_id",
+                                  "dataType": "STRING",
+                                  "description": "Identifier for the scheduled service instance"
+                                },
+                                {
+                                  "name": "x_job_id",
+                                  "dataType": "STRING",
+                                  "description": "Cross-system job identifier"
+                                },
+                                {
+                                  "name": "x_request_id",
+                                  "dataType": "STRING",
+                                  "description": "Cross-system request identifier"
+                                },
+                                {
+                                  "name": "new_elapsed_time",
+                                  "dataType": "INT",
+                                  "description": "Elapsed execution time in milliseconds (present once execution finishes)"
+                                },
+                                {
+                                  "name": "new_error_code",
+                                  "dataType": "STRING",
+                                  "description": "Error code returned on failure (present only on failure)"
+                                },
+                                {
+                                  "name": "new_error_desc",
+                                  "dataType": "STRING",
+                                  "description": "Error description returned on failure (present only on failure)"
+                                },
+                                {
+                                  "name": "new_execution_finish_datetime",
+                                  "dataType": "TIMESTAMPZ",
+                                  "description": "Timestamp execution finished, with timezone offset (present once execution finishes)"
+                                },
+                                {
+                                  "name": "new_execution_start_datetime",
+                                  "dataType": "TIMESTAMPZ",
+                                  "description": "Timestamp execution started, with timezone offset (present once execution finishes)"
+                                },
+                                {
+                                  "name": "new_result",
+                                  "dataType": "STRING",
+                                  "description": "Execution result, e.g. fail (present once execution finishes)"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
