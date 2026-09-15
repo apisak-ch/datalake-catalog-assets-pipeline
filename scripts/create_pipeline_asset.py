@@ -6,20 +6,23 @@ OpenMetadata -- same style as create_db_asset.py, connect_lineage.py, and
 create_service.py.
 
 Usage:
-    python scripts/create_pipeline_asset.py configs/scheduler_service_journal_data_extraction/pipeline_config.json
+    python scripts/create_pipeline_asset.py configs/scheduler_service_journal_data_extraction/scheduler_pipeline_config.json
 
 Idempotency: uses PUT, so re-running is safe -- creates if missing,
 updates in place if it already exists.
 """
 
 import json
+import os
 import sys
 
 import requests
+from dotenv import load_dotenv
 
-# --- Configuration: fill these in for your environment ---
-OPENMETADATA_HOST = "http://localhost:8585/api"
-OPENMETADATA_TOKEN = "your-personal-access-token"
+# --- Configuration: loaded from .env in the repo root (see .env.example) ---
+load_dotenv()
+OPENMETADATA_HOST = os.environ["OPENMETADATA_HOST"]
+OPENMETADATA_TOKEN = os.environ["OPENMETADATA_TOKEN"]
 # -----------------------------------------------------------
 
 HEADERS = {
@@ -61,6 +64,6 @@ def main(config_file: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python scripts/create_pipeline_asset.py configs/scheduler_service_journal_data_extraction/pipeline_config.json")
+        print("Usage: python scripts/create_pipeline_asset.py configs/scheduler_service_journal_data_extraction/scheduler_pipeline_config.json")
         sys.exit(1)
     main(sys.argv[1])

@@ -19,13 +19,16 @@ updates in place if it already exists.
 """
 
 import json
+import os
 import sys
 
 import requests
+from dotenv import load_dotenv
 
-# --- Configuration: fill these in for your environment ---
-OPENMETADATA_HOST = "http://localhost:8585/api"
-OPENMETADATA_TOKEN = "your-personal-access-token"
+# --- Configuration: loaded from .env in the repo root (see .env.example) ---
+load_dotenv()
+OPENMETADATA_HOST = os.environ["OPENMETADATA_HOST"]
+OPENMETADATA_TOKEN = os.environ["OPENMETADATA_TOKEN"]
 # -----------------------------------------------------------
 
 HEADERS = {

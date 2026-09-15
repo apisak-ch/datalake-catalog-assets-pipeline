@@ -7,21 +7,24 @@ resolving each fromEntity/toEntity FQN to its ID the same way, then calls
 DELETE instead of PUT.
 
 Usage:
-    python scripts/disconnect_lineage.py configs/scheduler_service_journal_data_extraction/lineage_config.json
+    python scripts/disconnect_lineage.py configs/scheduler_service_journal_data_extraction/scheduler_lineage_config.json
 
 NOTE: this only removes the edges listed in the config. It does not
 delete the entities themselves (topics, tables, pipelines, containers).
 """
 
 import json
+import os
 import sys
 from urllib.parse import quote
 
 import requests
+from dotenv import load_dotenv
 
-# --- Configuration: fill these in for your environment ---
-OPENMETADATA_HOST = "http://localhost:8585/api"
-OPENMETADATA_TOKEN = "your-personal-access-token"
+# --- Configuration: loaded from .env in the repo root (see .env.example) ---
+load_dotenv()
+OPENMETADATA_HOST = os.environ["OPENMETADATA_HOST"]
+OPENMETADATA_TOKEN = os.environ["OPENMETADATA_TOKEN"]
 # -----------------------------------------------------------
 
 HEADERS = {
@@ -81,6 +84,6 @@ def main(config_file: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python scripts/disconnect_lineage.py configs/scheduler_service_journal_data_extraction/lineage_config.json")
+        print("Usage: python scripts/disconnect_lineage.py configs/scheduler_service_journal_data_extraction/scheduler_lineage_config.json")
         sys.exit(1)
     main(sys.argv[1])

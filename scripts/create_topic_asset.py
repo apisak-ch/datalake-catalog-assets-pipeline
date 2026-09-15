@@ -5,20 +5,23 @@ Config-driven script for creating (or updating) Topic entities in
 OpenMetadata -- same style as create_pipeline_asset.py, create_db_asset.py, etc.
 
 Usage:
-    python scripts/create_topic_asset.py configs/scheduler_service_journal_data_extraction/topic_config.json
+    python scripts/create_topic_asset.py configs/scheduler_service_journal_data_extraction/scheduler_topic_config.json
 
 Idempotency: uses PUT, so re-running is safe -- creates if missing,
 updates in place if it already exists.
 """
 
 import json
+import os
 import sys
 
 import requests
+from dotenv import load_dotenv
 
-# --- Configuration: fill these in for your environment ---
-OPENMETADATA_HOST = "http://localhost:8585/api"
-OPENMETADATA_TOKEN = "your-personal-access-token"
+# --- Configuration: loaded from .env in the repo root (see .env.example) ---
+load_dotenv()
+OPENMETADATA_HOST = os.environ["OPENMETADATA_HOST"]
+OPENMETADATA_TOKEN = os.environ["OPENMETADATA_TOKEN"]
 # -----------------------------------------------------------
 
 HEADERS = {
@@ -64,6 +67,6 @@ def main(config_file: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python scripts/create_topic_asset.py configs/scheduler_service_journal_data_extraction/topic_config.json")
+        print("Usage: python scripts/create_topic_asset.py configs/scheduler_service_journal_data_extraction/scheduler_topic_config.json")
         sys.exit(1)
     main(sys.argv[1])

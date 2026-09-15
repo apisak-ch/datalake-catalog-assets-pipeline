@@ -95,30 +95,41 @@ assuming they'll merge cleanly.
 Scripts live in `scripts/`. Configs live in `configs/<project>/`, where
 `<project>` is the full, unambiguous project name matching its real DAG
 name (`scheduler_service_journal_data_extraction`, `ndid_data_collection`)
-— not an abbreviation. Since the folder name already identifies the
-project, filenames inside it stay short (`pipeline_config.json`, not
-`ndid_pipeline_config.json`). `configs/shared/` holds `service_config.json`
-only, since services aren't owned by any single project.
+— not an abbreviation. Filenames inside each folder keep a **short**
+project prefix (`scheduler_`, `ndid_`) rather than the full folder name
+or no prefix at all — short enough to stay readable, but still
+identifiable at a glance in an editor tab where the folder path isn't
+visible. `configs/shared/` holds `service_config.json` only (no prefix),
+since services aren't owned by any single project.
 
 Run everything from the repo root, e.g.:
 
 ```bash
-python scripts/create_db_asset.py configs/scheduler_service_journal_data_extraction/hbase_asset_config.json
+python scripts/create_db_asset.py configs/scheduler_service_journal_data_extraction/scheduler_hbase_asset_config.json
 ```
+
+**One-time setup per person:** `pip install -r requirements.txt`, then
+`cp .env.example .env` and fill in your real `OPENMETADATA_HOST` /
+`OPENMETADATA_TOKEN`. Scripts read credentials from `.env` (via
+`python-dotenv`), never hardcoded — `.env` is gitignored, only
+`.env.example` (a template with no real values) is committed. Missing
+`.env` fails loudly with a `KeyError` naming the missing variable,
+rather than silently defaulting to something wrong.
 
 | Script | Example config | Creates |
 |---|---|---|
 | `scripts/create_service.py` | `configs/shared/service_config.json` | Services (any kind) |
-| `scripts/create_db_asset.py` | `configs/<project>/hbase_asset_config.json`, `.../hive_asset_config.json` | Databases, schemas, tables |
-| `scripts/create_topic_asset.py` | `configs/<project>/topic_config.json` | Topics |
-| `scripts/create_pipeline_asset.py` | `configs/<project>/pipeline_config.json` | Pipelines |
-| `scripts/create_container_asset.py` | `configs/<project>/container_config.json` (or `ftp_container_config.json` / `hdfs_container_config.json` when a project spans multiple storage services) | Containers (order matters — parent before child) |
-| `scripts/connect_lineage.py` | `configs/<project>/lineage_config.json` | Lineage edges, with optional `pipeline` attribution |
-| `scripts/disconnect_lineage.py` | `configs/<project>/lineage_config.json` | Removes lineage edges (the one delete-capable script) |
+| `scripts/create_db_asset.py` | `configs/<project>/<project>_hbase_asset_config.json`, `..._hive_asset_config.json` | Databases, schemas, tables |
+| `scripts/create_topic_asset.py` | `configs/<project>/<project>_topic_config.json` | Topics |
+| `scripts/create_pipeline_asset.py` | `configs/<project>/<project>_pipeline_config.json` | Pipelines |
+| `scripts/create_container_asset.py` | `configs/<project>/<project>_container_config.json` (or `_ftp_container_config.json` / `_hdfs_container_config.json` when a project spans multiple storage services) | Containers (order matters — parent before child) |
+| `scripts/connect_lineage.py` | `configs/<project>/<project>_lineage_config.json` | Lineage edges, with optional `pipeline` attribution |
+| `scripts/disconnect_lineage.py` | `configs/<project>/<project>_lineage_config.json` | Removes lineage edges (the one delete-capable script) |
 
 Current projects: `configs/scheduler_service_journal_data_extraction/`
-(6 files) and `configs/ndid_data_collection/` (5 files, no `topic_config`
-since this pipeline has no Kafka involvement).
+(6 files, `scheduler_` prefix) and `configs/ndid_data_collection/`
+(5 files, `ndid_` prefix — no `topic_config` since this pipeline has no
+Kafka involvement).
 
 All scripts read `OPENMETADATA_HOST` / `OPENMETADATA_TOKEN` from constants
 at the top of the file — set these before running anything.

@@ -9,7 +9,7 @@ and run this script against it. To add a new table, database, or schema
 later, just edit the JSON and re-run -- no code changes needed.
 
 Usage:
-    python scripts/create_db_asset.py configs/scheduler_service_journal_data_extraction/hbase_asset_config.json
+    python scripts/create_db_asset.py configs/scheduler_service_journal_data_extraction/scheduler_hbase_asset_config.json
 
 Idempotency: every entity is created via PUT (createOrUpdate), which
 OpenMetadata treats as "create if missing, update in place if it already
@@ -24,13 +24,16 @@ or /docs) if your version differs.
 """
 
 import json
+import os
 import sys
 
 import requests
+from dotenv import load_dotenv
 
-# --- Configuration: fill these in for your environment ---
-OPENMETADATA_HOST = "http://localhost:8585/api"
-OPENMETADATA_TOKEN = "your-personal-access-token"
+# --- Configuration: loaded from .env in the repo root (see .env.example) ---
+load_dotenv()
+OPENMETADATA_HOST = os.environ["OPENMETADATA_HOST"]
+OPENMETADATA_TOKEN = os.environ["OPENMETADATA_TOKEN"]
 # -----------------------------------------------------------
 
 HEADERS = {
@@ -98,6 +101,6 @@ def main(config_file: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python scripts/create_db_asset.py configs/scheduler_service_journal_data_extraction/hbase_asset_config.json")
+        print("Usage: python scripts/create_db_asset.py configs/scheduler_service_journal_data_extraction/scheduler_hbase_asset_config.json")
         sys.exit(1)
     main(sys.argv[1])
