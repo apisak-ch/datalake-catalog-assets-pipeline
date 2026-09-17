@@ -1,0 +1,25 @@
+{
+  "containers": [
+    {
+      "fqn": "ftp.data.prod.file.mymo.ToLAKE.open_saving_logs"
+    },
+    {
+      "fqn": "hdfs.prod.raw.vipera.open_account_data_collection_raw.open_saving_logs_raw"
+    },
+    {
+      "fqn": "hdfs.prod.raw.vipera.open_account_data_collection_raw"
+    },
+    {
+      "fqn": "hdfs.prod.cleansed.datalake.open_account_data_collection_cleansed.open_saving_logs_cleansed"
+    },
+    {
+      "fqn": "hdfs.prod.cleansed.datalake.open_account_data_collection_cleansed"
+    },
+    {
+      "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.open_account_data_collection_gold_safe.open_saving_logs_gold_safe"
+    },
+    {
+      "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.open_account_data_collection_gold_safe"
+    }
+  ]
+}

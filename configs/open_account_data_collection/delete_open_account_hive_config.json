@@ -1,0 +1,10 @@
+{
+  "tables": [
+    {
+      "service": "hive",
+      "database": "prod",
+      "schema": "prod_safe_mymo",
+      "name": "open_saving_logs"
+    }
+  ]
+}

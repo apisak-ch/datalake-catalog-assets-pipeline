@@ -150,13 +150,24 @@ no descriptions, no nested hierarchy).
 | `scripts/delete_db_asset.py` | `configs/<project>/delete_<project>_hbase_config.json` | `{"tables": [{"service", "database", "schema", "name", "hardDelete"?}]}` — flat list, doesn't touch the parent database/schema |
 | `scripts/delete_topic_asset.py` | `configs/<project>/delete_<project>_topic_config.json` | `{"topics": [{"service", "name", "hardDelete"?}]}` |
 | `scripts/delete_pipeline_asset.py` | `configs/<project>/delete_<project>_pipeline_config.json` | `{"pipelines": [{"service", "name", "hardDelete"?}]}` |
-| `scripts/delete_container_asset.py` | `configs/<project>/delete_<project>_container_config.json` | `{"containers": [{"fqn", "hardDelete"?}]}` — full FQN given directly, no parent-chain resolution needed |
+| `scripts/delete_container_asset.py` | `configs/<project>/delete_<project>_container_config.json` (split per service if the project spans more than one, e.g. `delete_<project>_ftp_container_config.json` / `delete_<project>_hdfs_container_config.json` — same split as the create configs) | `{"containers": [{"fqn", "hardDelete"?}]}` — full FQN given directly, no parent-chain resolution needed |
 | `scripts/disconnect_lineage.py` | `configs/<project>/<project>_lineage_config.json` (same shape as `connect_lineage.py` — lineage is the one exception, since an edge is already just two FQNs) | Removes lineage edges |
 
 Defaults are deliberately conservative: soft delete (`hardDelete: false`)
 unless an entry sets `"hardDelete": true`, and `delete_service.py`
 defaults to non-recursive (`recursive: false`) so a service with
 existing children fails to delete rather than silently cascading.
+
+**Delete configs must mirror create's file-splitting boundaries, even
+though the content shape differs.** If a project's containers span
+multiple services (e.g. `ndid_data_collection` has both `ftp` and
+`hdfs`), that's two separate `create_*_container_config.json` files —
+so its delete configs must also be two separate files
+(`delete_ndid_ftp_container_config.json`,
+`delete_ndid_hdfs_container_config.json`), never one combined file
+covering both services. The dedicated-delete-config change (flat lists,
+FQNs instead of nested hierarchy) is about *what's inside* each file,
+not license to merge files that create keeps separate.
 
 **Always summarize what will be deleted and get confirmation before
 running any `delete_*.py` script or `disconnect_lineage.py`** — see

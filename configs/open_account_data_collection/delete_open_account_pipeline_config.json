@@ -1,0 +1,8 @@
+{
+  "pipelines": [
+    {
+      "service": "airflow",
+      "name": "open_account_data_collection"
+    }
+  ]
+}
