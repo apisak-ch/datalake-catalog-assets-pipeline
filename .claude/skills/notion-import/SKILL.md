@@ -78,6 +78,18 @@ connector is available, since it doesn't have this limitation at all.
    repeatedly turned out to be simplified (missing zones, missing
    validation steps, non-literal process names).
 
+   Pipeline pages in this project typically carry a **"Related Data"**
+   table linking out to per-file/per-table detail pages (e.g. "FTP -
+   `<name>`", "HDFS - `<name>`", "`<schema>.<table>`"). **For file and
+   container (data) configs, source schema and path facts only from
+   those linked detail pages — not from the context diagram or other
+   sections (Requirements, sheet-spec links).** Treat the context
+   diagram as illustrative of pipeline flow only; if a zone (e.g. a
+   staging copy before a Hive load) appears in an existing catalog
+   config but has no corresponding Related Data entry, that's an
+   inference from project convention, not something sourced from this
+   doc — flag it as such in step 7.
+
    Check the doc's own internal consistency, not just against other
    docs — a doc can contradict itself (e.g. a table named one way in its
    header and a different way three sections later). Flag it rather than
@@ -101,10 +113,14 @@ connector is available, since it doesn't have this limitation at all.
    names, renamed services, outdated diagram labels).
 
 6. **Write the draft config** to a new or existing `*_config.json` file,
-   following the exact JSON shape the matching script expects. If the
-   doc only supports part of the full picture (e.g. real DAG/pipeline
-   structure but no column-level schema yet), draft what's genuinely
-   supported and don't fill the gap with invented columns.
+   following the exact JSON shape the matching script expects. Every
+   table or file/container in scope needs a **real schema** — if the doc
+   doesn't give real column-level detail for one of them (e.g. real
+   DAG/pipeline structure exists but a specific file's columns don't),
+   that's not a quiet gap to leave implicit in a schema-less shell — it
+   must be called out explicitly in step 7, by name, every time. Don't
+   fill it with invented columns, and don't silently borrow another
+   zone/file's schema for it without saying that's what happened.
 
 7. **Stop. Do not run the create/delete script.** Present the draft and:
    - List every field or structural choice that was **inferred rather
@@ -114,13 +130,16 @@ connector is available, since it doesn't have this limitation at all.
      rather than a best-effort guess (e.g. conflicting information,
      missing required fields, a name that doesn't match an existing
      entity).
+   - **Name every table or file/container that's missing a real
+     schema**, one by one — don't let this blend into the general
+     ambiguity list. If three files were drafted and one has no schema,
+     say clearly which one and why (link unresolved, page fetchable but
+     empty, whatever the actual reason is).
    - If the content doesn't support a full draft (common for an
      overview/index page that only links out to real detail elsewhere,
      or a linked page that couldn't be fetched/found), produce a
      **gap list** instead of forcing a thin draft: which specific pages
-     or files are still needed, and what they should contain (e.g. "need
-     column-level schema for `prod_safe_mymo.X` — link present but page
-     not fetchable/found").
+     or files are still needed, and what they should contain.
    - Ask which script to run and confirm before running it.
 
 ## What this skill does not do

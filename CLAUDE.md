@@ -95,6 +95,16 @@ assuming they'll merge cleanly.
 - When a config's data doesn't match what its filename/label claims
   (e.g. a "schedule-setting" paste that's actually schedule-action data),
   say so and confirm before proceeding.
+- **Every table or file-based asset needs a real schema — a table, or a
+  file/container at any zone (raw, cleansed, gold_safe, or equivalent),
+  on HDFS, FTP, or any storage service.** Don't create one as a
+  schema-less shell without saying so out loud. If the source material
+  doesn't give real column-level detail for something in scope, stop and
+  tell the person exactly what's missing (which table/file, which zone)
+  rather than quietly drafting it without columns or silently inferring
+  one from a sibling zone. It's fine to proceed with everything that
+  *does* have real schema while flagging the gap for what doesn't — but
+  the gap itself must be said, not left implicit in a shell entity.
 
 ## Scripts in this project
 
