@@ -90,6 +90,18 @@ connector is available, since it doesn't have this limitation at all.
    inference from project convention, not something sourced from this
    doc — flag it as such in step 7.
 
+   **Default preference: create HDFS/file/Hive assets that match
+   Related Data one-for-one — don't add an extra zone or entity just
+   because a sibling pipeline's convention has one.** An earlier
+   pipeline in this project (`open_account_data_collection`) got a
+   `gold_safe` staging zone pushed to OpenMetadata even though nothing
+   in its Related Data table backed it — the person confirmed that was
+   fine to leave as-is since that project was a POC, not that it should
+   happen again. Before creating (not just drafting) any entity that
+   exists only because of cross-project convention, name it as
+   convention-only and get an explicit yes — don't fold it into the
+   normal "ask which script to run" confirmation as if it were sourced.
+
    Check the doc's own internal consistency, not just against other
    docs — a doc can contradict itself (e.g. a table named one way in its
    header and a different way three sections later). Flag it rather than
@@ -113,7 +125,20 @@ connector is available, since it doesn't have this limitation at all.
    names, renamed services, outdated diagram labels).
 
 6. **Write the draft config** to a new or existing `*_config.json` file,
-   following the exact JSON shape the matching script expects. Every
+   following the exact JSON shape the matching script expects.
+   **Whether HDFS raw and cleansed zones share an identical schema
+   varies by pipeline** — some genuinely transform between zones, some
+   don't. Don't assume either way across pipelines; check each zone's
+   *own* linked detail page. What must never happen: a zone's detail
+   page gives a real column-level schema and it gets dropped from the
+   config anyway (e.g. because it looked like a duplicate of a sibling
+   zone's schema) — carry over whatever schema each zone's own source
+   page actually states, even if it happens to match another zone's.
+   Only treat one zone's schema as standing in for another's (e.g. a
+   `gold_safe` staging copy described as "same content as the cleansed
+   zone" with no schema page of its own) when that zone has **no
+   detail page at all** — and say so explicitly per step 7, since that's
+   an inference, not a sourced fact. Every
    table or file/container in scope needs a **real schema** — if the doc
    doesn't give real column-level detail for one of them (e.g. real
    DAG/pipeline structure exists but a specific file's columns don't),
