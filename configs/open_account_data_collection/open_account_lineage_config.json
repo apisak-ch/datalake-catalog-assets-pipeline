@@ -1,0 +1,60 @@
+{
+  "edges": [
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "ftp.data.prod.file.mymo.ToLAKE.open_saving_logs"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.raw.vipera.open_account_data_collection_raw.open_saving_logs_raw"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.open_account_data_collection"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.raw.vipera.open_account_data_collection_raw.open_saving_logs_raw"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.datalake.open_account_data_collection_cleansed.open_saving_logs_cleansed"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.open_account_data_collection"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.datalake.open_account_data_collection_cleansed.open_saving_logs_cleansed"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.open_account_data_collection_gold_safe.open_saving_logs_gold_safe"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.open_account_data_collection"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.open_account_data_collection_gold_safe.open_saving_logs_gold_safe"
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.open_saving_logs"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.open_account_data_collection"
+      }
+    }
+  ]
+}

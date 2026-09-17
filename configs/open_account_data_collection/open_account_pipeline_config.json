@@ -1,0 +1,12 @@
+{
+  "pipelines": [
+    {
+      "service": "airflow",
+      "name": "open_account_data_collection",
+      "displayName": "Open Account Data Collection",
+      "description": "Daily (T-1) pipeline collecting the open_saving_logs file (log of open digital-savings-account activity, used to support marketing) from FTP. Validates checksum, stores a raw copy in the HDFS raw zone, copies it to the HDFS cleansed zone, stages it in the HDFS gold_safe zone, then loads it into Hive (prod_safe_mymo.open_saving_logs).",
+      "sourceUrl": "http://10.82.100.194:8085/dags/open_account_data_collection/graph",
+      "scheduleInterval": "15 3 * * *"
+    }
+  ]
+}

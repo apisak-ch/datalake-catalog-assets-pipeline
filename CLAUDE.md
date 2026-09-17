@@ -78,12 +78,18 @@ assuming they'll merge cleanly.
   Remove already-created entries before adding new ones. This is purely a
   config-file convention — removing an entry from the JSON does **not**
   delete the entity from OpenMetadata (scripts are PUT/create-or-update
-  only, except `delete_lineage.py`).
+  only, except the `delete_*.py` / `disconnect_lineage.py` scripts).
 - **Draft before you push.** Never run a `create_*.py` script against
   OpenMetadata without showing the person the draft config first. Real
   source docs in this project have repeatedly contained ambiguities,
   wrong table names, and ambiguous/wrapped terminal output that only
   got caught through review — don't assume a source doc is unambiguous.
+- **Always summarize before deleting.** Before running any `delete_*.py`
+  script or `disconnect_lineage.py`, list exactly what will be removed
+  (entity names/FQNs, and whether `hardDelete`/`recursive` is set) and
+  get confirmation first. This applies every time, not just the first
+  time in a conversation — deletes are harder to undo than creates, and
+  a config can silently include more than the person had in mind.
 - Flag ambiguity in a source document explicitly rather than silently
   guessing a resolution.
 - When a config's data doesn't match what its filename/label claims
@@ -118,13 +124,20 @@ rather than silently defaulting to something wrong.
 
 | Script | Example config | Creates |
 |---|---|---|
-| `scripts/create_service.py` | `configs/shared/service_config.json` | Services (any kind) |
-| `scripts/create_db_asset.py` | `configs/<project>/<project>_hbase_asset_config.json`, `..._hive_asset_config.json` | Databases, schemas, tables |
-| `scripts/create_topic_asset.py` | `configs/<project>/<project>_topic_config.json` | Topics |
-| `scripts/create_pipeline_asset.py` | `configs/<project>/<project>_pipeline_config.json` | Pipelines |
-| `scripts/create_container_asset.py` | `configs/<project>/<project>_container_config.json` (or `_ftp_container_config.json` / `_hdfs_container_config.json` when a project spans multiple storage services) | Containers (order matters — parent before child) |
-| `scripts/connect_lineage.py` | `configs/<project>/<project>_lineage_config.json` | Lineage edges, with optional `pipeline` attribution |
-| `scripts/disconnect_lineage.py` | `configs/<project>/<project>_lineage_config.json` | Removes lineage edges (the one delete-capable script) |
+| `scripts/create_service.py` / `scripts/delete_service.py` | `configs/shared/service_config.json` | Services (any kind) |
+| `scripts/create_db_asset.py` / `scripts/delete_db_asset.py` | `configs/<project>/<project>_hbase_asset_config.json`, `..._hive_asset_config.json` | Databases, schemas, tables (delete only removes tables, not the parent database/schema) |
+| `scripts/create_topic_asset.py` / `scripts/delete_topic_asset.py` | `configs/<project>/<project>_topic_config.json` | Topics |
+| `scripts/create_pipeline_asset.py` / `scripts/delete_pipeline_asset.py` | `configs/<project>/<project>_pipeline_config.json` | Pipelines |
+| `scripts/create_container_asset.py` / `scripts/delete_container_asset.py` | `configs/<project>/<project>_container_config.json` (or `_ftp_container_config.json` / `_hdfs_container_config.json` when a project spans multiple storage services) | Containers (create: parent before child; delete: reverse, child before parent, handled automatically) |
+| `scripts/connect_lineage.py` / `scripts/disconnect_lineage.py` | `configs/<project>/<project>_lineage_config.json` | Lineage edges, with optional `pipeline` attribution |
+
+Every `delete_*.py` script reads the **exact same config file** as its
+`create_*.py` counterpart -- point it at the same JSON and it removes
+what that config would otherwise create. Defaults are deliberately
+conservative: soft delete (`hardDelete: false`) unless an entry sets
+`"hardDelete": true`, and services default to non-recursive (`recursive:
+false`) so a service with existing children fails to delete rather than
+silently cascading.
 
 Current projects: `configs/scheduler_service_journal_data_extraction/`
 (6 files, `scheduler_` prefix) and `configs/ndid_data_collection/`
