@@ -1,12 +1,19 @@
 """
 delete_pipeline_asset.py
 
-Deletes Pipeline entities -- the counterpart to create_pipeline_asset.py.
-Reads the exact same pipeline_config.json format, resolving each
-pipeline's real ID by FQN, then calling DELETE instead of PUT.
+Deletes Pipeline entities, using its own dedicated delete config --
+just service + name per pipeline, not the full description/sourceUrl/
+scheduleInterval detail that create_pipeline_asset.py's config carries.
+
+Config shape:
+    {
+      "pipelines": [
+        {"service": "airflow", "name": "ndid_data_collection", "hardDelete": false}
+      ]
+    }
 
 Usage:
-    python scripts/delete_pipeline_asset.py configs/<project>/<project>_pipeline_config.json
+    python scripts/delete_pipeline_asset.py configs/<project>/delete_<project>_pipeline_config.json
 
 Safety default: soft delete (hardDelete: false) unless a pipeline entry
 explicitly sets "hardDelete": true.
@@ -34,6 +41,8 @@ HEADERS = {
 
 def delete_pipeline(pipeline: dict) -> None:
     fqn = f"{pipeline['service']}.{pipeline['name']}"
+    hard_delete = pipeline.get("hardDelete", False)
+
     get_url = f"{OPENMETADATA_HOST}/v1/pipelines/name/{quote(fqn, safe='')}"
     resp = requests.get(get_url, headers=HEADERS, params={"fields": "id"}, timeout=30)
     if resp.status_code == 404:
@@ -44,8 +53,6 @@ def delete_pipeline(pipeline: dict) -> None:
         resp.raise_for_status()
 
     entity_id = resp.json()["id"]
-    hard_delete = pipeline.get("hardDelete", False)
-
     delete_url = f"{OPENMETADATA_HOST}/v1/pipelines/{entity_id}"
     resp = requests.delete(
         delete_url,
@@ -72,6 +79,6 @@ def main(config_file: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python scripts/delete_pipeline_asset.py configs/<project>/<project>_pipeline_config.json")
+        print("Usage: python scripts/delete_pipeline_asset.py configs/<project>/delete_<project>_pipeline_config.json")
         sys.exit(1)
     main(sys.argv[1])

@@ -1,22 +1,29 @@
 """
 delete_container_asset.py
 
-Deletes Container entities -- the counterpart to create_container_asset.py.
-Reads the exact same container_config.json format.
+Deletes Container entities, using its own dedicated delete config --
+each entry gives the full FQN directly, rather than the parentName
+chain create_container_asset.py's config uses to build up a tree.
+Delete only needs to identify each container, not describe its place
+in a hierarchy, so there's no ordering requirement here.
 
-Unlike the create script, order here is handled automatically: this
-script first walks the config top-to-bottom to reconstruct each
-container's full FQN (following parentName chains, the same way
-create_container_asset.py resolves parent IDs), then deletes everything
-in REVERSE order -- children before parents. This avoids needing
-recursive delete and avoids failures from trying to delete a folder
-that still has children.
+Config shape:
+    {
+      "containers": [
+        {"fqn": "hdfs.prod.cleansed.datalake.ndid_data_collection_cleansed.ndid_customer_journey_cleansed", "hardDelete": false}
+      ]
+    }
 
 Usage:
-    python scripts/delete_container_asset.py configs/<project>/<project>_container_config.json
+    python scripts/delete_container_asset.py configs/<project>/delete_<project>_container_config.json
 
 Safety default: soft delete (hardDelete: false) unless a container
 entry explicitly sets "hardDelete": true.
+
+NOTE: if you're deleting a whole subtree (a folder and everything
+under it), list the deepest/leaf containers first in the config --
+deleting a parent while children still exist may fail depending on
+the server's own safeguards.
 """
 
 import json
@@ -39,7 +46,10 @@ HEADERS = {
 }
 
 
-def delete_container(fqn: str, hard_delete: bool) -> None:
+def delete_container(container: dict) -> None:
+    fqn = container["fqn"]
+    hard_delete = container.get("hardDelete", False)
+
     get_url = f"{OPENMETADATA_HOST}/v1/containers/name/{quote(fqn, safe='')}"
     resp = requests.get(get_url, headers=HEADERS, params={"fields": "id"}, timeout=30)
     if resp.status_code == 404:
@@ -68,35 +78,14 @@ def main(config_file: str) -> None:
     with open(config_file) as f:
         config = json.load(f)
 
-    service = config["service"]
-    containers = config["containers"]
-
-    # Forward pass: reconstruct each container's full FQN by following
-    # parentName chains, same logic create_container_asset.py uses to
-    # resolve parent IDs.
-    fqn_by_name = {}
-    for c in containers:
-        if c.get("parentName"):
-            parent_fqn = fqn_by_name.get(c["parentName"])
-            if not parent_fqn:
-                raise ValueError(
-                    f"Parent '{c['parentName']}' for '{c['name']}' not found earlier "
-                    "in the config -- check ordering."
-                )
-            fqn_by_name[c["name"]] = f"{parent_fqn}.{c['name']}"
-        else:
-            fqn_by_name[c["name"]] = f"{service}.{c['name']}"
-
-    # Reverse pass: delete children before parents.
-    for c in reversed(containers):
-        fqn = fqn_by_name[c["name"]]
-        delete_container(fqn, c.get("hardDelete", False))
+    for container in config["containers"]:
+        delete_container(container)
 
     print("\nDone.")
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python scripts/delete_container_asset.py configs/<project>/<project>_container_config.json")
+        print("Usage: python scripts/delete_container_asset.py configs/<project>/delete_<project>_container_config.json")
         sys.exit(1)
     main(sys.argv[1])

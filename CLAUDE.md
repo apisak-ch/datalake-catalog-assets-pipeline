@@ -124,25 +124,44 @@ rather than silently defaulting to something wrong.
 
 | Script | Example config | Creates |
 |---|---|---|
-| `scripts/create_service.py` / `scripts/delete_service.py` | `configs/shared/service_config.json` | Services (any kind) |
-| `scripts/create_db_asset.py` / `scripts/delete_db_asset.py` | `configs/<project>/<project>_hbase_asset_config.json`, `..._hive_asset_config.json` | Databases, schemas, tables (delete only removes tables, not the parent database/schema) |
-| `scripts/create_topic_asset.py` / `scripts/delete_topic_asset.py` | `configs/<project>/<project>_topic_config.json` | Topics |
-| `scripts/create_pipeline_asset.py` / `scripts/delete_pipeline_asset.py` | `configs/<project>/<project>_pipeline_config.json` | Pipelines |
-| `scripts/create_container_asset.py` / `scripts/delete_container_asset.py` | `configs/<project>/<project>_container_config.json` (or `_ftp_container_config.json` / `_hdfs_container_config.json` when a project spans multiple storage services) | Containers (create: parent before child; delete: reverse, child before parent, handled automatically) |
-| `scripts/connect_lineage.py` / `scripts/disconnect_lineage.py` | `configs/<project>/<project>_lineage_config.json` | Lineage edges, with optional `pipeline` attribution |
-
-Every `delete_*.py` script reads the **exact same config file** as its
-`create_*.py` counterpart -- point it at the same JSON and it removes
-what that config would otherwise create. Defaults are deliberately
-conservative: soft delete (`hardDelete: false`) unless an entry sets
-`"hardDelete": true`, and services default to non-recursive (`recursive:
-false`) so a service with existing children fails to delete rather than
-silently cascading.
+| `scripts/create_service.py` | `configs/shared/service_config.json` | Services (any kind) |
+| `scripts/create_db_asset.py` | `configs/<project>/<project>_hbase_asset_config.json`, `..._hive_asset_config.json` | Databases, schemas, tables |
+| `scripts/create_topic_asset.py` | `configs/<project>/<project>_topic_config.json` | Topics |
+| `scripts/create_pipeline_asset.py` | `configs/<project>/<project>_pipeline_config.json` | Pipelines |
+| `scripts/create_container_asset.py` | `configs/<project>/<project>_container_config.json` (or `_ftp_container_config.json` / `_hdfs_container_config.json` when a project spans multiple storage services) | Containers (order matters — parent before child) |
+| `scripts/connect_lineage.py` | `configs/<project>/<project>_lineage_config.json` | Lineage edges, with optional `pipeline` attribution |
 
 Current projects: `configs/scheduler_service_journal_data_extraction/`
 (6 files, `scheduler_` prefix) and `configs/ndid_data_collection/`
 (5 files, `ndid_` prefix — no `topic_config` since this pipeline has no
 Kafka involvement).
+
+## Deleting assets
+
+Each `create_*.py` script has a `delete_*.py` counterpart (plus
+`disconnect_lineage.py` for lineage), but **delete scripts use their
+own dedicated config format, not the create config** — delete only
+needs enough to identify an entity, not fully describe it (no columns,
+no descriptions, no nested hierarchy).
+
+| Script | Example config | Config shape |
+|---|---|---|
+| `scripts/delete_service.py` | `configs/shared/delete_service_config.json` | `{"services": [{"kind", "name", "recursive"?, "hardDelete"?}]}` |
+| `scripts/delete_db_asset.py` | `configs/<project>/delete_<project>_hbase_config.json` | `{"tables": [{"service", "database", "schema", "name", "hardDelete"?}]}` — flat list, doesn't touch the parent database/schema |
+| `scripts/delete_topic_asset.py` | `configs/<project>/delete_<project>_topic_config.json` | `{"topics": [{"service", "name", "hardDelete"?}]}` |
+| `scripts/delete_pipeline_asset.py` | `configs/<project>/delete_<project>_pipeline_config.json` | `{"pipelines": [{"service", "name", "hardDelete"?}]}` |
+| `scripts/delete_container_asset.py` | `configs/<project>/delete_<project>_container_config.json` | `{"containers": [{"fqn", "hardDelete"?}]}` — full FQN given directly, no parent-chain resolution needed |
+| `scripts/disconnect_lineage.py` | `configs/<project>/<project>_lineage_config.json` (same shape as `connect_lineage.py` — lineage is the one exception, since an edge is already just two FQNs) | Removes lineage edges |
+
+Defaults are deliberately conservative: soft delete (`hardDelete: false`)
+unless an entry sets `"hardDelete": true`, and `delete_service.py`
+defaults to non-recursive (`recursive: false`) so a service with
+existing children fails to delete rather than silently cascading.
+
+**Always summarize what will be deleted and get confirmation before
+running any `delete_*.py` script or `disconnect_lineage.py`** — see
+Workflow rules above. This applies every time, not just once per
+conversation.
 
 All scripts read `OPENMETADATA_HOST` / `OPENMETADATA_TOKEN` from constants
 at the top of the file — set these before running anything.

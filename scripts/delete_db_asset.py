@@ -1,14 +1,23 @@
 """
 delete_db_asset.py
 
-Deletes Table entities -- the counterpart to create_db_asset.py. Reads
-the exact same assets_config.json format (service/databases/schemas/
-tables), but only deletes the TABLES listed -- it deliberately does
-NOT delete the parent database/schema, since those are structural and
-likely shared with other tables not in this config.
+Deletes Table entities, using its own dedicated delete config -- a
+flat list of tables to remove, not the nested database/schema/table
+hierarchy with full column definitions that create_db_asset.py uses.
+Delete only needs enough to identify each table, not describe it.
+
+Deliberately does NOT delete the parent database/schema, since those
+are structural and likely shared with other tables not in this config.
+
+Config shape:
+    {
+      "tables": [
+        {"service": "hbase", "database": "prod", "schema": "prod", "name": "schedule-action", "hardDelete": false}
+      ]
+    }
 
 Usage:
-    python scripts/delete_db_asset.py configs/<project>/<project>_hbase_asset_config.json
+    python scripts/delete_db_asset.py configs/<project>/delete_<project>_hbase_config.json
 
 Safety default: soft delete (hardDelete: false) unless a table entry
 explicitly sets "hardDelete": true.
@@ -34,7 +43,10 @@ HEADERS = {
 }
 
 
-def delete_table(fqn: str, hard_delete: bool) -> None:
+def delete_table(table: dict) -> None:
+    fqn = f"{table['service']}.{table['database']}.{table['schema']}.{table['name']}"
+    hard_delete = table.get("hardDelete", False)
+
     get_url = f"{OPENMETADATA_HOST}/v1/tables/name/{quote(fqn, safe='')}"
     resp = requests.get(get_url, headers=HEADERS, params={"fields": "id"}, timeout=30)
     if resp.status_code == 404:
@@ -63,12 +75,8 @@ def main(config_file: str) -> None:
     with open(config_file) as f:
         config = json.load(f)
 
-    service = config["service"]
-    for db in config["databases"]:
-        for schema in db.get("schemas", []):
-            for table in schema.get("tables", []):
-                fqn = f"{service}.{db['name']}.{schema['name']}.{table['name']}"
-                delete_table(fqn, table.get("hardDelete", False))
+    for table in config["tables"]:
+        delete_table(table)
 
     print("\nDone. Parent databases/schemas were left untouched -- delete those "
           "manually if you're sure nothing else depends on them.")
@@ -76,6 +84,6 @@ def main(config_file: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python scripts/delete_db_asset.py configs/<project>/<project>_hbase_asset_config.json")
+        print("Usage: python scripts/delete_db_asset.py configs/<project>/delete_<project>_hbase_config.json")
         sys.exit(1)
     main(sys.argv[1])

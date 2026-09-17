@@ -1,12 +1,19 @@
 """
 delete_topic_asset.py
 
-Deletes Topic entities -- the counterpart to create_topic_asset.py.
-Reads the exact same topic_config.json format, resolving each topic's
-real ID by FQN, then calling DELETE instead of PUT.
+Deletes Topic entities, using its own dedicated delete config -- just
+service + name per topic, not the full schemaFields/partitions detail
+that create_topic_asset.py's config carries.
+
+Config shape:
+    {
+      "topics": [
+        {"service": "kafka", "name": "schedule-journal", "hardDelete": false}
+      ]
+    }
 
 Usage:
-    python scripts/delete_topic_asset.py configs/<project>/<project>_topic_config.json
+    python scripts/delete_topic_asset.py configs/<project>/delete_<project>_topic_config.json
 
 Safety default: soft delete (hardDelete: false) unless a topic entry
 explicitly sets "hardDelete": true.
@@ -37,6 +44,8 @@ HEADERS = {
 
 def delete_topic(topic: dict) -> None:
     fqn = f"{topic['service']}.{topic['name']}"
+    hard_delete = topic.get("hardDelete", False)
+
     get_url = f"{OPENMETADATA_HOST}/v1/topics/name/{quote(fqn, safe='')}"
     resp = requests.get(get_url, headers=HEADERS, params={"fields": "id"}, timeout=30)
     if resp.status_code == 404:
@@ -47,8 +56,6 @@ def delete_topic(topic: dict) -> None:
         resp.raise_for_status()
 
     entity_id = resp.json()["id"]
-    hard_delete = topic.get("hardDelete", False)
-
     delete_url = f"{OPENMETADATA_HOST}/v1/topics/{entity_id}"
     resp = requests.delete(
         delete_url,
@@ -67,7 +74,7 @@ def main(config_file: str) -> None:
     with open(config_file) as f:
         config = json.load(f)
 
-    for topic in config["messaging"]:
+    for topic in config["topics"]:
         delete_topic(topic)
 
     print("\nDone.")
@@ -75,6 +82,6 @@ def main(config_file: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python scripts/delete_topic_asset.py configs/<project>/<project>_topic_config.json")
+        print("Usage: python scripts/delete_topic_asset.py configs/<project>/delete_<project>_topic_config.json")
         sys.exit(1)
     main(sys.argv[1])

@@ -1,15 +1,22 @@
 """
 delete_service.py
 
-Deletes OpenMetadata services -- the counterpart to create_service.py.
-Reads the exact same service_config.json format, resolving each
-service's real ID by name, then calling DELETE instead of PUT.
+Deletes OpenMetadata services, using its own dedicated delete config
+(not the create_service.py config -- delete only needs enough to
+identify each service, not fully describe it).
+
+Config shape:
+    {
+      "services": [
+        {"kind": "storage", "name": "ftp", "recursive": false, "hardDelete": false}
+      ]
+    }
 
 Usage:
-    python scripts/delete_service.py configs/shared/service_config.json
+    python scripts/delete_service.py configs/shared/delete_service_config.json
 
 Safety defaults: soft delete (hardDelete: false) and non-recursive
-(recursive: false) unless a service entry explicitly overrides them.
+(recursive: false) unless an entry explicitly overrides them.
 Non-recursive means a service with existing child assets (databases,
 topics, etc.) will fail to delete rather than silently cascading --
 set "recursive": true on that entry if you really want everything under
@@ -93,6 +100,6 @@ def main(config_file: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python scripts/delete_service.py configs/shared/service_config.json")
+        print("Usage: python scripts/delete_service.py configs/shared/delete_service_config.json")
         sys.exit(1)
     main(sys.argv[1])
