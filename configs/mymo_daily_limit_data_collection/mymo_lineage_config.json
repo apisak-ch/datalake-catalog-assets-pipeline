@@ -1,0 +1,88 @@
+{
+  "edges": [
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "ftp.data.prod.file.mymo.ToLAKE.mymo_transaction_limit"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.raw.datalake_raw.mymo_daily_limit_data_collection_raw.mymo_transaction_limit_raw"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_daily_limit_data_collection"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "ftp.data.prod.file.mymo.ToLAKE.mymo_set_limit"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.raw.datalake_raw.mymo_daily_limit_data_collection_raw.mymo_set_limit_raw"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_daily_limit_data_collection"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.raw.datalake_raw.mymo_daily_limit_data_collection_raw.mymo_transaction_limit_raw"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.mymo_daily_limit_data_collection_gold_safe.mymo_transaction_limit_gold_safe"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_daily_limit_data_collection"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.raw.datalake_raw.mymo_daily_limit_data_collection_raw.mymo_set_limit_raw"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.mymo_daily_limit_data_collection_gold_safe.mymo_set_limit_gold_safe"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_daily_limit_data_collection"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.mymo_daily_limit_data_collection_gold_safe.mymo_transaction_limit_gold_safe"
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.mymo_transaction_limit"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_daily_limit_data_collection"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.mymo_daily_limit_data_collection_gold_safe.mymo_set_limit_gold_safe"
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.mymo_set_limit"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_daily_limit_data_collection"
+      }
+    }
+  ]
+}

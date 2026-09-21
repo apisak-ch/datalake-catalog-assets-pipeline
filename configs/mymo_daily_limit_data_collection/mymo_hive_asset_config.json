@@ -1,0 +1,152 @@
+{
+  "service": "hive",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod_safe_mymo",
+          "tables": [
+            {
+              "name": "mymo_transaction_limit",
+              "description": "Log of transactions blocked due to daily-limit restrictions in the MyMo application. Data date T-1, available from 2025-12-09.",
+              "columns": [
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING",
+                  "description": "cif (CustomerNumber)"
+                },
+                {
+                  "name": "transaction_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "date yyyy-MM-dd HH:mm:ss (TxDateTime)"
+                },
+                {
+                  "name": "transaction_type",
+                  "dataType": "STRING",
+                  "description": "Type of daily limit transaction (TxType)"
+                },
+                {
+                  "name": "limit",
+                  "dataType": "DECIMAL",
+                  "dataTypeDisplay": "decimal(18,2)",
+                  "description": "Initial limit set by the system before the customer adjusts it (Limit)"
+                },
+                {
+                  "name": "spentroom",
+                  "dataType": "DECIMAL",
+                  "dataTypeDisplay": "decimal(18,2)",
+                  "description": "Remaining daily limit available for use (SpentRoom)"
+                },
+                {
+                  "name": "amount",
+                  "dataType": "DECIMAL",
+                  "dataTypeDisplay": "decimal(18,2)",
+                  "description": "Amount of the transaction made that day (Amount)"
+                },
+                {
+                  "name": "server_id",
+                  "dataType": "STRING",
+                  "description": "Server/machine number (ServerId)"
+                },
+                {
+                  "name": "session_id",
+                  "dataType": "STRING",
+                  "description": "Session identifier (SessionId)"
+                },
+                {
+                  "name": "operation",
+                  "dataType": "STRING",
+                  "description": "Operation name (Operation)"
+                },
+                {
+                  "name": "app_mode",
+                  "dataType": "STRING",
+                  "description": "Customer's application mode: L = MyMo Secure plus, N = MyMo normal mode (AppMode)"
+                },
+                {
+                  "name": "limit_mode",
+                  "dataType": "STRING",
+                  "description": "Customer's limit mode, derived from AppMode + Tier: SECURE_PLUS, NORMAL, SMALL (LimitMode)"
+                },
+                {
+                  "name": "tier",
+                  "dataType": "STRING",
+                  "description": "Customer's tier: S, NONS (Tier)"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column, T-1 data date"
+                }
+              ]
+            },
+            {
+              "name": "mymo_set_limit",
+              "description": "Log of limit-adjustment activities performed through the MyMo application. Data date T-1, available from 2025-12-09.",
+              "columns": [
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING",
+                  "description": "cif (CustomerNumber)"
+                },
+                {
+                  "name": "transaction_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "yyyy-MM-dd HH:mm:ss (TxDateTime)"
+                },
+                {
+                  "name": "transaction_type",
+                  "dataType": "STRING",
+                  "description": "Type of daily-limit adjustment transaction (TxType)"
+                },
+                {
+                  "name": "pre_limit",
+                  "dataType": "DECIMAL",
+                  "dataTypeDisplay": "decimal(18,2)",
+                  "description": "Initial limit set by the system before the customer adjusts it (PreLimit)"
+                },
+                {
+                  "name": "changing_limit",
+                  "dataType": "DECIMAL",
+                  "dataTypeDisplay": "decimal(18,2)",
+                  "description": "Daily limit amount after adjustment / post limit (ChangingLimit)"
+                },
+                {
+                  "name": "application_mode",
+                  "dataType": "STRING",
+                  "description": "MyMo Normal or Secure plus (ApplicationMode)"
+                },
+                {
+                  "name": "server_id",
+                  "dataType": "STRING",
+                  "description": "MyMo server/machine number (ServerId)"
+                },
+                {
+                  "name": "session_id",
+                  "dataType": "STRING",
+                  "description": "Session identifier (SessionId)"
+                },
+                {
+                  "name": "limit_mode",
+                  "dataType": "STRING",
+                  "description": "Customer's limit mode, derived from AppMode + Tier: SECURE_PLUS, NORMAL, SMALL (LimitMode)"
+                },
+                {
+                  "name": "tier",
+                  "dataType": "STRING",
+                  "description": "Customer's tier: S, NONS (Tier)"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column, T-1 data date"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

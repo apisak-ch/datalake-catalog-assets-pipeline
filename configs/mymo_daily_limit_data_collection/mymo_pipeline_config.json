@@ -1,0 +1,12 @@
+{
+  "pipelines": [
+    {
+      "service": "airflow",
+      "name": "mymo_daily_limit_data_collection",
+      "displayName": "MyMo Daily Limit Data Collection",
+      "description": "Daily (T-1) pipeline collecting 2 MyMo daily-limit files from FTP: mymo_transaction_limit (log of transactions blocked due to limit restrictions) and mymo_set_limit (log of limit-adjustment activity). Validates checksums, stores raw copies to the HDFS raw zone, copies them to the HDFS gold_safe zone (no separate cleansed zone for this pipeline), then loads into Hive (prod_safe_mymo.mymo_transaction_limit, prod_safe_mymo.mymo_set_limit) via a Hive loader step.",
+      "sourceUrl": "http://10.82.100.194:8085/dags/mymo_daily_limit_data_collection/graph",
+      "scheduleInterval": "5 5 * * *"
+    }
+  ]
+}

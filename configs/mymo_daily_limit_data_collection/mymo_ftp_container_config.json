@@ -1,0 +1,183 @@
+{
+  "service": "ftp",
+  "containers": [
+    {
+      "name": "data",
+      "prefix": "/data/",
+      "description": "Root of the FTP server."
+    },
+    {
+      "name": "prod",
+      "parentName": "data",
+      "prefix": "/data/prod/",
+      "description": "Prod environment."
+    },
+    {
+      "name": "file",
+      "parentName": "prod",
+      "prefix": "/data/prod/file/",
+      "description": "File drop area."
+    },
+    {
+      "name": "mymo",
+      "parentName": "file",
+      "prefix": "/data/prod/file/mymo/",
+      "description": "MyMo app source files, shared across multiple projects/pipelines, not specific to any single one."
+    },
+    {
+      "name": "ToLAKE",
+      "parentName": "mymo",
+      "prefix": "/data/prod/file/mymo/ToLAKE/",
+      "description": "Shared FTP drop location used by several projects' datalake pipelines, not exclusive to any one pipeline."
+    },
+    {
+      "name": "mymo_transaction_limit",
+      "parentName": "ToLAKE",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "A log capturing all transactions that were blocked due to limit restrictions. Gzipped daily file: mymo_transaction_limit_<yyyymmdd>.csv.gz, pipe-delimited, with header, with a companion mymo_transaction_limit_<yyyymmdd>.cksum for validation.",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "customer_id",
+            "dataType": "STRING",
+            "description": "cif (CustomerNumber)"
+          },
+          {
+            "name": "transaction_datetime",
+            "dataType": "TIMESTAMP",
+            "description": "date yyyy-MM-dd HH:mm:ss (TxDateTime)"
+          },
+          {
+            "name": "transaction_type",
+            "dataType": "STRING",
+            "description": "Type of daily limit transaction (TxType)"
+          },
+          {
+            "name": "limit",
+            "dataType": "DECIMAL",
+            "dataTypeDisplay": "decimal(18,2)",
+            "description": "Initial limit set by the system before the customer adjusts it (Limit)"
+          },
+          {
+            "name": "spentroom",
+            "dataType": "DECIMAL",
+            "dataTypeDisplay": "decimal(18,2)",
+            "description": "Remaining daily limit available for use (SpentRoom)"
+          },
+          {
+            "name": "amount",
+            "dataType": "DECIMAL",
+            "dataTypeDisplay": "decimal(18,2)",
+            "description": "Amount of the transaction made that day (Amount)"
+          },
+          {
+            "name": "server_id",
+            "dataType": "STRING",
+            "description": "Server/machine number (ServerId)"
+          },
+          {
+            "name": "session_id",
+            "dataType": "STRING",
+            "description": "Session identifier (SessionId)"
+          },
+          {
+            "name": "operation",
+            "dataType": "STRING",
+            "description": "Operation name (Operation)"
+          },
+          {
+            "name": "app_mode",
+            "dataType": "STRING",
+            "description": "Customer's application mode: L = MyMo Secure plus, N = MyMo normal mode (AppMode)"
+          },
+          {
+            "name": "limit_mode",
+            "dataType": "STRING",
+            "description": "Customer's limit mode, derived from AppMode + Tier: SECURE_PLUS, NORMAL, SMALL (LimitMode)"
+          },
+          {
+            "name": "tier",
+            "dataType": "STRING",
+            "description": "Customer's tier: S, NONS (Tier)"
+          },
+          {
+            "name": "daily_date",
+            "dataType": "DATE",
+            "description": "Partition column, date of data"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mymo_set_limit",
+      "parentName": "ToLAKE",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "A log capturing all limit-adjustment activities performed through the MyMo application. Gzipped daily file: mymo_set_limit_<yyyymmdd>.csv.gz, pipe-delimited, with header, with a companion mymo_set_limit_<yyyymmdd>.cksum for validation.",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "customer_id",
+            "dataType": "STRING",
+            "description": "cif (CustomerNumber)"
+          },
+          {
+            "name": "transaction_datetime",
+            "dataType": "TIMESTAMP",
+            "description": "yyyy-MM-dd HH:mm:ss (TxDateTime)"
+          },
+          {
+            "name": "transaction_type",
+            "dataType": "STRING",
+            "description": "Type of daily-limit adjustment transaction (TxType)"
+          },
+          {
+            "name": "pre_limit",
+            "dataType": "DECIMAL",
+            "dataTypeDisplay": "decimal(18,2)",
+            "description": "Initial limit set by the system before the customer adjusts it (PreLimit)"
+          },
+          {
+            "name": "changing_limit",
+            "dataType": "DECIMAL",
+            "dataTypeDisplay": "decimal(18,2)",
+            "description": "Daily limit amount after adjustment / post limit (ChangingLimit)"
+          },
+          {
+            "name": "application_mode",
+            "dataType": "STRING",
+            "description": "MyMo Normal or Secure plus (ApplicationMode)"
+          },
+          {
+            "name": "server_id",
+            "dataType": "STRING",
+            "description": "MyMo server/machine number (ServerId)"
+          },
+          {
+            "name": "session_id",
+            "dataType": "STRING",
+            "description": "Session identifier (SessionId)"
+          },
+          {
+            "name": "limit_mode",
+            "dataType": "STRING",
+            "description": "Customer's limit mode, derived from AppMode + Tier: SECURE_PLUS, NORMAL, SMALL (LimitMode)"
+          },
+          {
+            "name": "tier",
+            "dataType": "STRING",
+            "description": "Customer's tier: S, NONS (Tier)"
+          },
+          {
+            "name": "daily_date",
+            "dataType": "DATE",
+            "description": "Partition column, date of data"
+          }
+        ]
+      }
+    }
+  ]
+}
