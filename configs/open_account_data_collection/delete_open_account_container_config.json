@@ -1,7 +1,7 @@
 {
   "containers": [
     {
-      "fqn": "ftp.data.prod.file.mymo.ToLAKE.open_saving_logs"
+      "fqn": "ftp-mymo.data.prod.file.mymo.ToLAKE.open_saving_logs"
     },
     {
       "fqn": "hdfs.prod.raw.vipera.open_account_data_collection_raw.open_saving_logs_raw"

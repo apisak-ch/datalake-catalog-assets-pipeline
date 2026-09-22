@@ -1,0 +1,10 @@
+{
+  "services": [
+    {
+      "kind": "storage",
+      "name": "ftp",
+      "recursive": true,
+      "hardDelete": false
+    }
+  ]
+}

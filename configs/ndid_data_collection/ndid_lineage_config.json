@@ -3,7 +3,7 @@
     {
       "fromEntity": {
         "type": "container",
-        "fqn": "ftp.data.prod.file.mymo.ToLAKE.ndid_customer_journey"
+        "fqn": "ftp-mymo.data.prod.file.mymo.ToLAKE.ndid_customer_journey"
       },
       "toEntity": {
         "type": "container",
@@ -17,7 +17,7 @@
     {
       "fromEntity": {
         "type": "container",
-        "fqn": "ftp.data.prod.file.mymo.ToLAKE.ndid_unenroll_log"
+        "fqn": "ftp-mymo.data.prod.file.mymo.ToLAKE.ndid_unenroll_log"
       },
       "toEntity": {
         "type": "container",
@@ -31,7 +31,7 @@
     {
       "fromEntity": {
         "type": "container",
-        "fqn": "ftp.data.prod.file.mymo.ToLAKE.ndid_idp_request_log"
+        "fqn": "ftp-mymo.data.prod.file.mymo.ToLAKE.ndid_idp_request_log"
       },
       "toEntity": {
         "type": "container",

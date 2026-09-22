@@ -32,8 +32,8 @@
     },
     {
       "kind": "storage",
-      "name": "ftp",
-      "description": "Manual storage service for tracking FTP-delivered source files, no live connector"
+      "name": "ftp-mymo",
+      "description": "Manual storage service for the MyMo-dedicated source FTP server (/data/prod/file/mymo/ToLAKE/), where MyMo/vipera drops daily export files for the lake to collect. No live connector"
     },
     {
       "kind": "storage",

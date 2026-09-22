@@ -15,6 +15,14 @@ is created/updated by writing a JSON config and running the matching
 | `airflow` | pipeline | CustomPipeline | batch DAGs |
 | `hdfs` | storage | CustomStorage | file zones |
 | `hive` | database | CustomDatabase | manual, no live connector (see naming below) |
+| `ftp-mymo` | storage | CustomStorage | inbound: MyMo-dedicated source FTP (`/data/prod/file/mymo/ToLAKE/`) |
+| `ftp-k8s` | storage | CustomStorage | outbound: delivery to downstream k8s processors (`/delta/datasource/`) |
+
+Separate FTP servers get separate services, since the service is the only
+place host/connection info has a structured home — merging two hosts into
+one service makes it impossible to tell which machine a file lives on.
+Merge only when two IPs are the *same* logical system (DR pair,
+load-balanced cluster), where an address change shouldn't churn FQNs.
 
 All services here are **manual** (no live ingestion connector attached).
 If a live connector is ever added for any of them, its auto-created
@@ -26,6 +34,12 @@ assuming they'll merge cleanly.
 - Service `name`: lowercase-hyphenated, no `-service` suffix (e.g. `hbase`,
   not `hbase-service`). `name` is **immutable** once created — get it right
   before creating, since fixing it later means deleting and recreating.
+  **Renaming a service is an admin-only operation.** It is not a rename at
+  all: it deletes the service and every entity under it, across *all*
+  projects that use it, then rebuilds them. If you think a service name is
+  wrong, raise it with the catalog admin rather than doing it yourself —
+  don't add a `delete_service.py` entry for a rename. See "Renaming a
+  service" below for the procedure the admin follows.
 - Environment is always `prod` (not `uat`/`default`) in database/namespace
   names, even when the source sample data came from `uat`. Source docs
   often express this as a bracket placeholder — `[env]`, `[namespace]`,
@@ -183,7 +197,7 @@ existing children fails to delete rather than silently cascading.
 
 **Delete configs must mirror create's file-splitting boundaries, even
 though the content shape differs.** If a project's containers span
-multiple services (e.g. `ndid_data_collection` has both `ftp` and
+multiple services (e.g. `ndid_data_collection` has both `ftp-mymo` and
 `hdfs`), that's two separate `create_*_container_config.json` files —
 so its delete configs must also be two separate files
 (`delete_ndid_ftp_container_config.json`,
@@ -196,6 +210,45 @@ not license to merge files that create keeps separate.
 running any `delete_*.py` script or `disconnect_lineage.py`** — see
 Workflow rules above. This applies every time, not just once per
 conversation.
+
+## Renaming a service (admin only)
+
+**Not a team operation** — see Naming conventions. Service names are
+immutable, so a "rename" is really create-new → copy-everything →
+delete-old, and it cascades across every project using that service.
+Raise the name with the admin instead of doing this yourself.
+
+The ordering matters: every step is additive until the last one, so the
+old service keeps serving lineage the whole time and a mistake anywhere
+in 3–6 means you just stop, with nothing broken.
+
+1. **Survey the blast radius.** Query the live API for every container/
+   table under the service, the lineage edges touching them, and — the
+   decisive one — whether any carry owners/tags/followers added by hand
+   in the UI. Configs only reproduce what's in the JSON, so UI-added
+   metadata is destroyed by the rebuild. If any exists, stop: it has to
+   be captured or re-applied by hand afterwards.
+2. **Swap the name in the configs.** `"service": "<old>"` in the
+   container/asset configs, `"<old>.` → `"<new>.` in the lineage and
+   delete configs. Match on the trailing quote/dot so sibling services
+   sharing a prefix (`ftp` vs `ftp-k8s`) can't be hit by accident, then
+   review every changed line in `git diff`.
+3. **Create the new service** (`create_service.py`). Both now coexist.
+4. **Rebuild the children** — re-run the same container/asset configs,
+   now pointing at the new service.
+5. **Rebuild the lineage** — re-run the lineage configs.
+6. **Verify parity before destroying anything** — compare old vs new
+   entity-by-entity: same paths, same column counts, same edge count.
+7. **Delete the old service.** Needs `recursive: true` (it has
+   children); prefer `hardDelete: false` — the old name stays occupied,
+   which doesn't matter since you're not reusing it. Summarize and
+   confirm first, as with any delete.
+
+This only works because the container/asset configs still hold their
+full contents. It's the one case where the "scoped to active work only"
+trimming rule in Workflow rules would have cost real work — trimmed
+configs mean nothing to re-run at steps 4–5, and every schema has to be
+reconstructed from the API or the source docs by hand.
 
 All scripts read `OPENMETADATA_HOST` / `OPENMETADATA_TOKEN` from constants
 at the top of the file — set these before running anything.

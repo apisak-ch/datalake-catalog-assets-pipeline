@@ -3,7 +3,7 @@
     {
       "fromEntity": {
         "type": "container",
-        "fqn": "ftp.data.prod.file.mymo.ToLAKE.mymo_transaction_limit"
+        "fqn": "ftp-mymo.data.prod.file.mymo.ToLAKE.mymo_transaction_limit"
       },
       "toEntity": {
         "type": "container",
@@ -17,7 +17,7 @@
     {
       "fromEntity": {
         "type": "container",
-        "fqn": "ftp.data.prod.file.mymo.ToLAKE.mymo_set_limit"
+        "fqn": "ftp-mymo.data.prod.file.mymo.ToLAKE.mymo_set_limit"
       },
       "toEntity": {
         "type": "container",
