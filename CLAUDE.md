@@ -105,6 +105,18 @@ assuming they'll merge cleanly.
   one from a sibling zone. It's fine to proceed with everything that
   *does* have real schema while flagging the gap for what doesn't — but
   the gap itself must be said, not left implicit in a shell entity.
+- **Check upstream existence before assuming it, not before every
+  create.** `create_*.py` scripts PUT (create-or-update), so re-running
+  against an entity your own config creates is always safe — no need to
+  check first. Checking matters specifically for entities a config only
+  *references* without creating: a lineage edge's `fromEntity`/
+  `toEntity` pointing at another project's table/container, or any
+  source-doc claim that something "already exists" elsewhere. Verify
+  those with `scripts/check_entity.py <type> <fqn>` (read-only GET, no
+  side effects) before drafting the reference — `connect_lineage.py`
+  fails at runtime if the endpoint doesn't exist, and this project has
+  already had a doc's input table turn out to not be cataloged at all
+  (`mymo_register_data_extraction`'s `register`/`deactivation` inputs).
 
 ## Scripts in this project
 
@@ -140,6 +152,7 @@ rather than silently defaulting to something wrong.
 | `scripts/create_pipeline_asset.py` | `configs/<project>/<project>_pipeline_config.json` | Pipelines |
 | `scripts/create_container_asset.py` | `configs/<project>/<project>_container_config.json` (or `_ftp_container_config.json` / `_hdfs_container_config.json` when a project spans multiple storage services) | Containers (order matters — parent before child) |
 | `scripts/connect_lineage.py` | `configs/<project>/<project>_lineage_config.json` | Lineage edges, with optional `pipeline` attribution |
+| `scripts/check_entity.py` | none (CLI args: `<type> <fqn> [<fqn> ...]`) | Nothing — read-only existence check, see Workflow rules |
 
 Current projects: `configs/scheduler_service_journal_data_extraction/`
 (6 files, `scheduler_` prefix) and `configs/ndid_data_collection/`
