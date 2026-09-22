@@ -1,0 +1,138 @@
+{
+  "service": "hdfs",
+  "containers": [
+    {
+      "name": "prod",
+      "prefix": "/prod/",
+      "description": "Root of the prod HDFS environment."
+    },
+    {
+      "name": "gold_safe",
+      "parentName": "prod",
+      "prefix": "/prod/gold_safe/",
+      "description": "This pipeline has no raw or cleansed zone -- it queries Hive directly (prod_safe_mymo.register, prod_safe_mymo.deactivation) and writes its output straight here."
+    },
+    {
+      "name": "datalake_gold_safe",
+      "displayName": "datalake",
+      "parentName": "gold_safe",
+      "prefix": "/prod/gold_safe/datalake/",
+      "description": "Datalake job outputs, grouped by job name."
+    },
+    {
+      "name": "mymo_register_data_extraction_gold_safe",
+      "displayName": "mymo_register_data_extraction",
+      "parentName": "datalake_gold_safe",
+      "prefix": "/prod/gold_safe/datalake/mymo_register_data_extraction/",
+      "description": "Output of the datalake-mymo-register-data-extraction-spark job, split into a normal/ and a secureplus/ subfolder by application_mode. Each subfolder holds a daily YYYYMMDD-dated delta file."
+    },
+    {
+      "name": "mymo_register_normal_gold_safe",
+      "displayName": "MyMo Normal Register",
+      "parentName": "mymo_register_data_extraction_gold_safe",
+      "prefix": "/prod/gold_safe/datalake/mymo_register_data_extraction/normal/",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "Log of MyMo normal registration data, SUMO channel only. File: DELTAMyMo_RegisterFromSUMO_yyyymmdd.csv (or mymo_register.csv header-only when there is no data for the day).",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "employee_id",
+            "dataType": "STRING",
+            "description": "Teller ID of GSB employee"
+          },
+          {
+            "name": "cif",
+            "dataType": "STRING",
+            "description": "MyMo customer's ID"
+          },
+          {
+            "name": "actual_register_datetime",
+            "dataType": "STRING",
+            "description": "Actual register datetime from MyMo"
+          },
+          {
+            "name": "register_datetime",
+            "dataType": "STRING",
+            "description": "Register datetime, time truncated to 00:00:00"
+          },
+          {
+            "name": "application_mode",
+            "dataType": "STRING",
+            "description": "Application mode (Normal for this file)"
+          },
+          {
+            "name": "channel",
+            "dataType": "STRING",
+            "description": "Register channel (SUMO)"
+          },
+          {
+            "name": "actual_deactivated_datetime",
+            "dataType": "STRING",
+            "description": "Actual deactivated datetime from MyMo, null if not yet deactivated"
+          },
+          {
+            "name": "deactivated_datetime",
+            "dataType": "STRING",
+            "description": "Deactivated datetime, time truncated to 00:00:00, null if not yet deactivated"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mymo_register_secureplus_gold_safe",
+      "displayName": "MyMo Secure Plus Register",
+      "parentName": "mymo_register_data_extraction_gold_safe",
+      "prefix": "/prod/gold_safe/datalake/mymo_register_data_extraction/secureplus/",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "Log of MyMo secure plus registration data, SUMO channel only. File: DELTAMyMoSecurePlus_RegisterFromSUMO_yyyymmdd.csv (or mymo_register.csv header-only when there is no data for the day).",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "employee_id",
+            "dataType": "STRING",
+            "description": "Teller ID of GSB employee"
+          },
+          {
+            "name": "cif",
+            "dataType": "STRING",
+            "description": "MyMo customer's ID"
+          },
+          {
+            "name": "actual_register_datetime",
+            "dataType": "STRING",
+            "description": "Actual register datetime from MyMo"
+          },
+          {
+            "name": "register_datetime",
+            "dataType": "STRING",
+            "description": "Register datetime, time truncated to 00:00:00"
+          },
+          {
+            "name": "application_mode",
+            "dataType": "STRING",
+            "description": "Application mode (SecurePlus for this file)"
+          },
+          {
+            "name": "channel",
+            "dataType": "STRING",
+            "description": "Register channel (SUMO)"
+          },
+          {
+            "name": "actual_deactivated_datetime",
+            "dataType": "STRING",
+            "description": "Actual deactivated datetime from MyMo, null if not yet deactivated"
+          },
+          {
+            "name": "deactivated_datetime",
+            "dataType": "STRING",
+            "description": "Deactivated datetime, time truncated to 00:00:00, null if not yet deactivated"
+          }
+        ]
+      }
+    }
+  ]
+}

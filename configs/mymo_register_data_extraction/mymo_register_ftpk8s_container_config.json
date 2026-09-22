@@ -1,0 +1,137 @@
+{
+  "service": "ftp-k8s",
+  "containers": [
+    {
+      "name": "delta",
+      "prefix": "/delta/",
+      "description": "Root of the delta k8s-hosted FTP delivery area."
+    },
+    {
+      "name": "delta_datasource",
+      "displayName": "datasource",
+      "parentName": "delta",
+      "prefix": "/delta/datasource/",
+      "description": "Delivery area, grouped by downstream processor."
+    },
+    {
+      "name": "mymo_processor",
+      "parentName": "delta_datasource",
+      "prefix": "/delta/datasource/mymo_processor/",
+      "description": "Delivery folder for the downstream mymo_processor consumer."
+    },
+    {
+      "name": "mymo_processor_register",
+      "displayName": "register",
+      "parentName": "mymo_processor",
+      "prefix": "/delta/datasource/mymo_processor/register/",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "Copy of the Normal-mode register output delivered to mymo_processor. File: DELTAMyMo_RegisterFromSUMO_yyyymmdd.csv (T-1). Same content as the HDFS gold_safe Normal Register output -- assumed same schema, not independently confirmed.",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "employee_id",
+            "dataType": "STRING",
+            "description": "Teller ID of GSB employee"
+          },
+          {
+            "name": "cif",
+            "dataType": "STRING",
+            "description": "MyMo customer's ID"
+          },
+          {
+            "name": "actual_register_datetime",
+            "dataType": "STRING",
+            "description": "Actual register datetime from MyMo"
+          },
+          {
+            "name": "register_datetime",
+            "dataType": "STRING",
+            "description": "Register datetime, time truncated to 00:00:00"
+          },
+          {
+            "name": "application_mode",
+            "dataType": "STRING",
+            "description": "Application mode (Normal for this file)"
+          },
+          {
+            "name": "channel",
+            "dataType": "STRING",
+            "description": "Register channel (SUMO)"
+          },
+          {
+            "name": "actual_deactivated_datetime",
+            "dataType": "STRING",
+            "description": "Actual deactivated datetime from MyMo, null if not yet deactivated"
+          },
+          {
+            "name": "deactivated_datetime",
+            "dataType": "STRING",
+            "description": "Deactivated datetime, time truncated to 00:00:00, null if not yet deactivated"
+          }
+        ]
+      }
+    },
+    {
+      "name": "secure_plus_processor",
+      "parentName": "delta_datasource",
+      "prefix": "/delta/datasource/secure_plus_processor/",
+      "description": "Delivery folder for the downstream secure_plus_processor consumer."
+    },
+    {
+      "name": "secure_plus_processor_register",
+      "displayName": "register",
+      "parentName": "secure_plus_processor",
+      "prefix": "/delta/datasource/secure_plus_processor/register/",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "Copy of the SecurePlus-mode register output delivered to secure_plus_processor. File: DELTAMyMoSecurePlus_RegisterFromSUMO_yyyymmdd.csv (T-1). Same content as the HDFS gold_safe Secure Plus Register output -- assumed same schema, not independently confirmed.",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "employee_id",
+            "dataType": "STRING",
+            "description": "Teller ID of GSB employee"
+          },
+          {
+            "name": "cif",
+            "dataType": "STRING",
+            "description": "MyMo customer's ID"
+          },
+          {
+            "name": "actual_register_datetime",
+            "dataType": "STRING",
+            "description": "Actual register datetime from MyMo"
+          },
+          {
+            "name": "register_datetime",
+            "dataType": "STRING",
+            "description": "Register datetime, time truncated to 00:00:00"
+          },
+          {
+            "name": "application_mode",
+            "dataType": "STRING",
+            "description": "Application mode (SecurePlus for this file)"
+          },
+          {
+            "name": "channel",
+            "dataType": "STRING",
+            "description": "Register channel (SUMO)"
+          },
+          {
+            "name": "actual_deactivated_datetime",
+            "dataType": "STRING",
+            "description": "Actual deactivated datetime from MyMo, null if not yet deactivated"
+          },
+          {
+            "name": "deactivated_datetime",
+            "dataType": "STRING",
+            "description": "Deactivated datetime, time truncated to 00:00:00, null if not yet deactivated"
+          }
+        ]
+      }
+    }
+  ]
+}

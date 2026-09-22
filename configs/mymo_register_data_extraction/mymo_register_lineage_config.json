@@ -1,0 +1,116 @@
+{
+  "edges": [
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.register"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.mymo_register_data_extraction_gold_safe.mymo_register_normal_gold_safe"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_register_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.register"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.mymo_register_data_extraction_gold_safe.mymo_register_secureplus_gold_safe"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_register_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.deactivation"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.mymo_register_data_extraction_gold_safe.mymo_register_normal_gold_safe"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_register_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.deactivation"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.mymo_register_data_extraction_gold_safe.mymo_register_secureplus_gold_safe"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_register_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.register"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "ftp-k8s.delta.delta_datasource.mymo_processor.mymo_processor_register"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_register_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.register"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "ftp-k8s.delta.delta_datasource.secure_plus_processor.secure_plus_processor_register"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_register_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.deactivation"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "ftp-k8s.delta.delta_datasource.mymo_processor.mymo_processor_register"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_register_data_extraction"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_mymo.deactivation"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "ftp-k8s.delta.delta_datasource.secure_plus_processor.secure_plus_processor_register"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.mymo_register_data_extraction"
+      }
+    }
+  ]
+}

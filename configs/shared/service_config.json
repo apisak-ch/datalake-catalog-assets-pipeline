@@ -34,6 +34,11 @@
       "kind": "storage",
       "name": "ftp",
       "description": "Manual storage service for tracking FTP-delivered source files, no live connector"
+    },
+    {
+      "kind": "storage",
+      "name": "ftp-k8s",
+      "description": "Manual storage service for tracking files delivered to downstream k8s-hosted FTP processors (mymo_processor, secure_plus_processor, ...), no live connector"
     }
   ]
 }

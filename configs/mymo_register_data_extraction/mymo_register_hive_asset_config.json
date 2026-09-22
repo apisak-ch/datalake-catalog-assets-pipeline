@@ -1,0 +1,142 @@
+{
+  "service": "hive",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod_safe_mymo",
+          "tables": [
+            {
+              "name": "register",
+              "description": "Captures registration activity from the MyMo application. Data date T-1, available from 2024-06-28. Not owned by mymo_register_data_extraction -- this is an upstream input read by that pipeline, produced by a separate, not-yet-cataloged MyMo Register Data Collection process. Included here only because nothing else in this repo currently creates it and mymo_register_data_extraction's lineage needs it to exist.",
+              "columns": [
+                {
+                  "name": "employee_id",
+                  "dataType": "STRING",
+                  "description": "Teller ID of GSB employee"
+                },
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING",
+                  "description": "Customer ID"
+                },
+                {
+                  "name": "register_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "Time of registration"
+                },
+                {
+                  "name": "application_mode",
+                  "dataType": "STRING",
+                  "description": "MyMo mode: Normal, SecurePlus"
+                },
+                {
+                  "name": "channel",
+                  "dataType": "STRING",
+                  "description": "Channel of registration: MyMo, SUMO"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column, date of registration"
+                }
+              ]
+            },
+            {
+              "name": "deactivation",
+              "description": "Captures MyMo user deactivation details including timestamps, channel data, and user metadata. Data date T-1, available from 2020-01-01. Not owned by mymo_register_data_extraction -- this is an upstream input read by that pipeline, produced by a separate, not-yet-cataloged MyMo Register Data Collection process. Included here only because nothing else in this repo currently creates it and mymo_register_data_extraction's lineage needs it to exist.",
+              "columns": [
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING",
+                  "description": "Customer identifier"
+                },
+                {
+                  "name": "mymo_user_id",
+                  "dataType": "STRING",
+                  "description": "MyMo user identifier"
+                },
+                {
+                  "name": "deactivate_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "Timestamp of deactivation"
+                },
+                {
+                  "name": "activate_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "Original activation timestamp"
+                },
+                {
+                  "name": "register_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "Timestamp of initial registration"
+                },
+                {
+                  "name": "last_login_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "Last login timestamp before deactivation"
+                },
+                {
+                  "name": "mobile_no",
+                  "dataType": "STRING",
+                  "description": "Mobile number associated with the account"
+                },
+                {
+                  "name": "type_id",
+                  "dataType": "STRING",
+                  "description": "User type identifier"
+                },
+                {
+                  "name": "branch_code",
+                  "dataType": "STRING",
+                  "description": "Registered branch code"
+                },
+                {
+                  "name": "branch_code_saved",
+                  "dataType": "STRING",
+                  "description": "Branch code saved by user"
+                },
+                {
+                  "name": "branch_code_submitted",
+                  "dataType": "STRING",
+                  "description": "Branch code submitted for deactivation"
+                },
+                {
+                  "name": "user_saved",
+                  "dataType": "STRING",
+                  "description": "Username saved"
+                },
+                {
+                  "name": "user_submitted",
+                  "dataType": "STRING",
+                  "description": "Username submitted"
+                },
+                {
+                  "name": "user_edited",
+                  "dataType": "STRING",
+                  "description": "Username edited during deactivation"
+                },
+                {
+                  "name": "date_saved",
+                  "dataType": "TIMESTAMP",
+                  "description": "Timestamp when data was saved"
+                },
+                {
+                  "name": "date_submitted",
+                  "dataType": "TIMESTAMP",
+                  "description": "Timestamp when data was submitted"
+                },
+                {
+                  "name": "deactivate_date",
+                  "dataType": "DATE",
+                  "description": "Partition column, date of deactivation"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

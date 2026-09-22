@@ -1,0 +1,10 @@
+{
+  "pipelines": [
+    {
+      "service": "airflow",
+      "name": "mymo_register_data_extraction",
+      "displayName": "MyMo Register Data Extraction",
+      "description": "Daily (T-1) Spark job (datalake-mymo-register-data-extraction-spark) that reads MyMo registration data from prod_safe_mymo.register (SUMO channel only) and deactivation history from prod_safe_mymo.deactivation (current T-1 and prior-since-6-months-ago deactivation record per customer), joins them to attach actual/rounded deactivation timestamps to each registration, and writes the result split by application_mode into two delta CSV files (Normal, SecurePlus) in the HDFS gold_safe zone. No raw or cleansed zone -- this job reads Hive directly."
+    }
+  ]
+}
