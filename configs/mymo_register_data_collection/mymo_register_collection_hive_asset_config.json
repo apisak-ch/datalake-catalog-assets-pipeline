@@ -1,0 +1,92 @@
+{
+  "service": "hive",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod_safe_mymo",
+          "tables": [
+            {
+              "name": "register",
+              "description": "Captures registration activity from the MyMo application. Data date T-1, available from 2024-06-28. Produced by this pipeline (mymo_register_data_collection); also read as an upstream input by mymo_register_data_extraction.",
+              "columns": [
+                {
+                  "name": "employee_id",
+                  "dataType": "STRING",
+                  "description": "Teller ID of GSB employee"
+                },
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING",
+                  "description": "Customer ID"
+                },
+                {
+                  "name": "register_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "Time of registration"
+                },
+                {
+                  "name": "application_mode",
+                  "dataType": "STRING",
+                  "description": "MyMo mode: Normal, SecurePlus"
+                },
+                {
+                  "name": "channel",
+                  "dataType": "STRING",
+                  "description": "Channel of registration: MyMo, SUMO"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column, date of registration"
+                }
+              ]
+            },
+            {
+              "name": "change_mode",
+              "description": "Tracks changes in MyMo users' application access mode, including source and destination modes, change time, and channel. Data date T-1, available from 2024-06-28. Produced by this pipeline (mymo_register_data_collection).",
+              "columns": [
+                {
+                  "name": "employee_id",
+                  "dataType": "STRING",
+                  "description": "Identifier of the employee making the change (if applicable)"
+                },
+                {
+                  "name": "customer_id",
+                  "dataType": "STRING",
+                  "description": "Customer identifier"
+                },
+                {
+                  "name": "change_datetime",
+                  "dataType": "TIMESTAMP",
+                  "description": "When the mode change occurred"
+                },
+                {
+                  "name": "mode_from",
+                  "dataType": "STRING",
+                  "description": "Previous MyMo mode"
+                },
+                {
+                  "name": "mode_to",
+                  "dataType": "STRING",
+                  "description": "Updated MyMo mode"
+                },
+                {
+                  "name": "channel",
+                  "dataType": "STRING",
+                  "description": "Channel through which the change occurred"
+                },
+                {
+                  "name": "daily_date",
+                  "dataType": "DATE",
+                  "description": "Partition column, date of the mode change"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

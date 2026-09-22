@@ -1,0 +1,10 @@
+{
+  "pipelines": [
+    {
+      "service": "airflow",
+      "name": "mymo_register_data_collection",
+      "displayName": "MyMo Register Data Collection",
+      "description": "Daily (T-1) batch pipeline collecting 2 files from MyMo Vipera via FTP (ftp-mymo): mymo_register (all MyMo registration activity) and mymo_changemode (MyMo mode-change activity, e.g. Normal <-> SecurePlus). Stores raw copies to the HDFS raw zone (vipera-sourced path), then loads into Hive (prod_safe_mymo.register, prod_safe_mymo.change_mode). Business purpose: store data related to MyMo registration and mode changes for further calculations. ~10,000 records/day. Severity level 3 pipeline; monitored via Slack notification on job success/failure."
+    }
+  ]
+}

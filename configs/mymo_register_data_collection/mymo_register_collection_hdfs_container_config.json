@@ -1,0 +1,111 @@
+{
+  "service": "hdfs",
+  "containers": [
+    {
+      "name": "prod",
+      "prefix": "/prod/",
+      "description": "Root of the prod HDFS environment."
+    },
+    {
+      "name": "raw",
+      "parentName": "prod",
+      "prefix": "/prod/raw/",
+      "description": "Raw zone: straight from FTP, no transform."
+    },
+    {
+      "name": "vipera_raw",
+      "displayName": "vipera",
+      "parentName": "raw",
+      "prefix": "/prod/raw/vipera/",
+      "description": "Raw data from the MyMo Vipera source system, grouped by source rather than by job -- source-doc-stated path, differs from the 'raw/datalake/<job>' grouping used by other pipelines in this project."
+    },
+    {
+      "name": "mymo_register_data_collection_raw",
+      "displayName": "mymo_register_data_collection",
+      "parentName": "vipera_raw",
+      "prefix": "/prod/raw/vipera/mymo_register_data_collection/",
+      "description": "Unzipped, validated files straight from FTP, before any processing. Holds both the register and change_mode files (source doc gives the same path for both, no per-file subfolder)."
+    },
+    {
+      "name": "mymo_register_raw",
+      "displayName": "register",
+      "parentName": "mymo_register_data_collection_raw",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "Raw CSV data file MyMo_Register_YYYYMMDD.csv, landing under the mymo_register_data_collection raw folder.",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "employee_id",
+            "dataType": "STRING",
+            "description": "Teller ID of GSB employee"
+          },
+          {
+            "name": "cif",
+            "dataType": "STRING",
+            "description": "Customer Number"
+          },
+          {
+            "name": "register_datetime",
+            "dataType": "TIMESTAMP",
+            "description": "Time of registration"
+          },
+          {
+            "name": "application_mode",
+            "dataType": "STRING",
+            "description": "MyMo Mode: Normal, SecurePlus"
+          },
+          {
+            "name": "channel",
+            "dataType": "STRING",
+            "description": "Channel of registration: MyMo, SUMO"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mymo_changemode_raw",
+      "displayName": "change_mode",
+      "parentName": "mymo_register_data_collection_raw",
+      "fileFormats": [
+        "csv"
+      ],
+      "description": "Raw CSV data file MyMo_ChangeMode_YYYYMMDD.csv, landing under the mymo_register_data_collection raw folder.",
+      "dataModel": {
+        "columns": [
+          {
+            "name": "employee_id",
+            "dataType": "STRING",
+            "description": "Teller ID of GSB employee"
+          },
+          {
+            "name": "cif",
+            "dataType": "STRING",
+            "description": "Customer Number"
+          },
+          {
+            "name": "change_datetime",
+            "dataType": "TIMESTAMP",
+            "description": "Time of the mode change"
+          },
+          {
+            "name": "mode_from",
+            "dataType": "STRING",
+            "description": "MyMo Mode before the change: Normal, SecurePlus"
+          },
+          {
+            "name": "mode_to",
+            "dataType": "STRING",
+            "description": "MyMo Mode after the change: Normal, SecurePlus"
+          },
+          {
+            "name": "channel",
+            "dataType": "STRING",
+            "description": "Channel of the change: MyMo, SUMO"
+          }
+        ]
+      }
+    }
+  ]
+}
