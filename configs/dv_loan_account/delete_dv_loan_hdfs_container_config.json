@@ -1,0 +1,6 @@
+{
+  "containers": [
+    { "fqn": "hdfs.prod.raw.dv_raw.loan_account_information_raw", "hardDelete": false },
+    { "fqn": "hdfs.prod.cleansed.dv_cleansed.loan_account_information_cleansed", "hardDelete": false }
+  ]
+}

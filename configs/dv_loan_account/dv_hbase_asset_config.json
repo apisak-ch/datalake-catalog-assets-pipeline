@@ -1,0 +1,104 @@
+{
+  "service": "hbase",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod",
+          "tables": [
+            {
+              "name": "customer-single-view",
+              "description": "Shared customer-360 HBase table. This config models the deposit_account fields (written by the Deposit Single View program) AND the loan_account fields (written by the Loan Single View program, datalake-loan-single-view-processor) -- both are included here because OpenMetadata's table update replaces the whole column tree, so this config must carry every family already cataloged or it would delete the other pipeline's columns. A third family, user_info, appears on the same live Notion page (customer-single-view) but belongs to a different, not-yet-cataloged pipeline -- it is deliberately left out, on the assumption it hasn't been created in OpenMetadata yet. Confirm that before running -- see draft notes.",
+              "columns": [
+                {
+                  "name": "rowkey",
+                  "dataType": "STRUCT",
+                  "description": "Single row key shape: [customer_id].",
+                  "children": [
+                    {
+                      "name": "customer_id",
+                      "displayName": "[customer_id]",
+                      "dataType": "STRUCT",
+                      "description": "Row key is the customer's CIF.",
+                      "children": [
+                        {
+                          "name": "info",
+                          "dataType": "STRUCT",
+                          "description": "Column family.",
+                          "children": [
+                            {
+                              "name": "qualifier",
+                              "dataType": "STRUCT",
+                              "description": "Real qualifiers are compound (<program>|<field_name>); the field names below are the known business attributes written by each program.",
+                              "children": [
+                                { "name": "total_traditional_salak_balance", "displayName": "deposit_account|total_traditional_salak_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_type in (3401, 3402) and account_status_code != 4" },
+                                { "name": "count_traditional_salak_account", "displayName": "deposit_account|count_traditional_salak_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_type in (3401, 3402) and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_digital_salak_balance", "displayName": "deposit_account|total_digital_salak_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_type = 3403 and account_status_code != 4" },
+                                { "name": "count_digital_salak_account", "displayName": "deposit_account|count_digital_salak_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_type = 3403 and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "count_total_deposit_account", "displayName": "deposit_account|count_total_deposit_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_group in (DDA, SAV, CD) and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_deposit_account_balance", "displayName": "deposit_account|total_deposit_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_group in (DDA, SAV, CD) and account_status_code != 4" },
+                                { "name": "count_savings_account", "displayName": "deposit_account|count_savings_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_group = SAV and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_savings_account_balance", "displayName": "deposit_account|total_savings_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_group = SAV and account_status_code != 4" },
+                                { "name": "count_fixed_deposit_account", "displayName": "deposit_account|count_fixed_deposit_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_group = CD and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_fixed_deposit_account_balance", "displayName": "deposit_account|total_fixed_deposit_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_group = CD and account_status_code != 4" },
+                                { "name": "count_current_account", "displayName": "deposit_account|count_current_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_group = DDA and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_current_account_balance", "displayName": "deposit_account|total_current_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_group = DDA and account_status_code != 4" },
+                                { "name": "total_closed_account", "displayName": "deposit_account|total_closed_account", "dataType": "INT", "description": "count where account_status_code = 4" },
+                                { "name": "count_jount_for_children", "displayName": "deposit_account|count_jount_for_children", "dataType": "INT", "description": "count(account_number) where relationship_code = E and account_status_code != 4. Field name has a typo in the source doc (\"jount\"); kept verbatim to match the real qualifier -- see draft notes. Also note: relationship_code = E doesn't appear in this pipeline's own relationship_code definitions (A/B/C) -- see draft notes." },
+                                { "name": "has_joint_for_children", "displayName": "deposit_account|has_joint_for_children", "dataType": "INT", "description": "1 if count_jount_for_children > 0, else 0" },
+                                { "name": "count_special_savings_account", "displayName": "deposit_account|count_special_savings_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_type = 2002 and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_special_savings_account_balance", "displayName": "deposit_account|total_special_savings_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_type = 2002 and account_status_code != 4" },
+                                { "name": "count_monthly_fixed_deposit_account", "displayName": "deposit_account|count_monthly_fixed_deposit_account", "dataType": "INT", "description": "count(account_number) where account_type = 3301 and account_status_code != 4" },
+                                { "name": "total_monthly_fixed_deposit_account_balance", "displayName": "deposit_account|total_monthly_fixed_deposit_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_type = 3301 and account_status_code != 4" },
+                                { "name": "data_date", "displayName": "deposit_account|data_date", "dataType": "STRING", "description": "Data date of the source year_month partition read" },
+                                { "name": "count_total_loan_account", "displayName": "loan_account|count_total_loan_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) in loan where account_group in (LN, COM, RC)" },
+                                { "name": "count_active_loan_account", "displayName": "loan_account|count_active_loan_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) in loan where account_group in (LN, COM, RC) and data_status != D" },
+                                { "name": "count_recently_closed_loan_account", "displayName": "loan_account|count_recently_closed_loan_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) in loan where account_group in (LN, COM, RC) and data_status = D" },
+                                { "name": "total_loan_principal_balance", "displayName": "loan_account|total_loan_principal_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) in loan where account_group in (LN, COM, RC) and data_status != D" },
+                                { "name": "count_current_account_with_credit_limit", "displayName": "loan_account|count_current_account_with_credit_limit", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) in loan where account_group = DDA and data_status != D" },
+                                { "name": "total_current_account_with_credit_limit_principal_balance", "displayName": "loan_account|total_current_account_with_credit_limit_principal_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) in loan where account_group = DDA and data_status != D" },
+                                { "name": "count_active_personal_loan_account", "displayName": "loan_account|count_active_personal_loan_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) in loan where account_group = LN, account_type = 7200, data_status != D. Note: the _eom counterpart of this field uses account_type = 7100 instead -- 7100/7200 appear swapped between non-eom and eom personal/housing fields across two independently-fetched source pages -- see draft notes." },
+                                { "name": "total_personal_loan_principal_balance", "displayName": "loan_account|total_personal_loan_principal_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) in loan where account_group = LN, account_type = 7200, data_status != D. See count_active_personal_loan_account note on the eom 7100/7200 swap." },
+                                { "name": "count_active_housing_loan_account", "displayName": "loan_account|count_active_housing_loan_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) in loan where account_group = LN, account_type = 7100, data_status != D. See count_active_personal_loan_account note on the eom 7100/7200 swap." },
+                                { "name": "total_housing_loan_principal_balance", "displayName": "loan_account|total_housing_loan_principal_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) in loan where account_group = LN, account_type = 7100, data_status != D. See count_active_personal_loan_account note on the eom 7100/7200 swap." },
+                                { "name": "count_active_society_loan_account", "displayName": "loan_account|count_active_society_loan_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) in loan where account_group = LN, account_type = 7900, data_status != D" },
+                                { "name": "total_society_loan_principal_balance", "displayName": "loan_account|total_society_loan_principal_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) in loan where account_group = LN, account_type = 7900, data_status != D" },
+                                { "name": "count_active_sme_loan_account", "displayName": "loan_account|count_active_sme_loan_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) in loan where account_group = COM, account_type = 8900, data_status != D" },
+                                { "name": "total_sme_loan_principal_balance", "displayName": "loan_account|total_sme_loan_principal_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) in loan where account_group = COM, account_type = 8900, data_status != D" },
+                                { "name": "count_other_loan_account", "displayName": "loan_account|count_other_loan_account", "dataType": "INT", "description": "count(account_number) in loan where account_group in (LN, COM) and account_type not in (7100, 7200, 7900, 8900), data_status != D. Source doc renders the qualifier as 'loan_accoun|tcount_other_loan_account' (pipe misplaced one character early) on both source pages -- corrected here to loan_account|count_other_loan_account by analogy with every other qualifier in this family -- see draft notes." },
+                                { "name": "total_other_loan_principal_balance", "displayName": "loan_account|total_other_loan_principal_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) in loan where account_group in (LN, COM) and account_type not in (7100, 7200, 7900, 8900), data_status != D. Same misplaced-pipe correction as count_other_loan_account -- see draft notes." },
+                                { "name": "loan_data_date", "displayName": "loan_account|data_date", "dataType": "STRING", "description": "Data date of the source daily_date partition read. Renamed from 'data_date' to 'loan_data_date' at the column-name level only to avoid clashing with deposit_account|data_date above -- the real HBase qualifier is still loan_account|data_date via displayName -- see draft notes." },
+                                { "name": "count_total_loan_account_eom", "displayName": "loan_account|count_total_loan_account_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "End-of-month (executed on the 3rd) variant of count_total_loan_account." },
+                                { "name": "count_active_loan_account_eom", "displayName": "loan_account|count_active_loan_account_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant of count_active_loan_account." },
+                                { "name": "count_recently_closed_loan_account_eom", "displayName": "loan_account|count_recently_closed_loan_account_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant of count_recently_closed_loan_account. Source doc uses account_status = 4 here vs. account_status = D for the non-eom field -- see draft notes." },
+                                { "name": "total_loan_principal_balance_eom", "displayName": "loan_account|total_loan_principal_balance_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant of total_loan_principal_balance." },
+                                { "name": "count_current_account_with_credit_limit_eom", "displayName": "loan_account|count_current_account_with_credit_limit_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant of count_current_account_with_credit_limit." },
+                                { "name": "total_current_account_with_credit_limit_principal_balance_eom", "displayName": "loan_account|total_current_account_with_credit_limit_principal_balance_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant of total_current_account_with_credit_limit_principal_balance." },
+                                { "name": "count_active_personal_loan_account_eom", "displayName": "loan_account|count_active_personal_loan_account_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant, account_type = 7100 per source doc -- see count_active_personal_loan_account note on the 7100/7200 swap." },
+                                { "name": "total_personal_loan_principal_balance_eom", "displayName": "loan_account|total_personal_loan_principal_balance_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant, account_type = 7100 per source doc -- see swap note above." },
+                                { "name": "count_active_housing_loan_account_eom", "displayName": "loan_account|count_active_housing_loan_account_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant, account_type = 7200 per source doc -- see swap note above." },
+                                { "name": "total_housing_loan_principal_balance_eom", "displayName": "loan_account|total_housing_loan_principal_balance_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant, account_type = 7200 per source doc -- see swap note above." },
+                                { "name": "count_active_society_loan_account_eom", "displayName": "loan_account|count_active_society_loan_account_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant of count_active_society_loan_account." },
+                                { "name": "total_society_loan_principal_balance_eom", "displayName": "loan_account|total_society_loan_principal_balance_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant of total_society_loan_principal_balance." },
+                                { "name": "count_active_sme_loan_account_eom", "displayName": "loan_account|count_active_sme_loan_account_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant of count_active_sme_loan_account." },
+                                { "name": "total_sme_loan_principal_balance_eom", "displayName": "loan_account|total_sme_loan_principal_balance_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant of total_sme_loan_principal_balance." },
+                                { "name": "count_other_loan_account_eom", "displayName": "loan_account|count_other_loan_account_eom", "dataType": "INT", "description": "EOM variant of count_other_loan_account. Same misplaced-pipe correction applied -- see draft notes." },
+                                { "name": "total_other_loan_principal_balance_eom", "displayName": "loan_account|total_other_loan_principal_balance_eom", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "EOM variant of total_other_loan_principal_balance. Same misplaced-pipe correction applied -- see draft notes." },
+                                { "name": "loan_data_date_eom", "displayName": "loan_account|data_date_eom", "dataType": "STRING", "description": "EOM variant of loan_account|data_date." }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

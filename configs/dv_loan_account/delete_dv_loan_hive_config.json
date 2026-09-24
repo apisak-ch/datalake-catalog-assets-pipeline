@@ -1,0 +1,6 @@
+{
+  "tables": [
+    { "service": "hive", "database": "prod", "schema": "prod_unsafe_account_information", "name": "loan", "hardDelete": false },
+    { "service": "hive", "database": "prod", "schema": "prod_safe_account_information", "name": "loan", "hardDelete": false }
+  ]
+}

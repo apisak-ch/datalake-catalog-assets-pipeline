@@ -1,0 +1,11 @@
+{
+  "pipelines": [
+    {
+      "service": "airflow",
+      "name": "dv_loan_account",
+      "displayName": "DV Loan Account",
+      "description": "Daily (T-3) pipeline collecting loan account information for all loan accounts owned by MyMo users. Four steps: 1) FTP shell script -- retrieve MYMO_LOAN_YYYYMMDD.TXT, land in HDFS raw. 2) datalake-dv-loan-validator (Spark) -- checks column count/types/duplicates/nulls/co_owner format/account-number length, moves file to HDFS cleansed. 3) datalake-dv-loan-processor (Spark) -- reads the cleansed file, compares current vs. previous-day data, pads account numbers, writes an unsafe (raw PII) and a safe (MD5-hashed account_number/auto_payment_account_number) Hive table. 4) datalake-loan-single-view-processor (Spark) -- reads the Hive loan table and writes aggregated per-customer loan fields into the shared customer-single-view HBase table.",
+      "_comment_unconfirmed": "name/scheduleInterval/sourceUrl are inferred from the project's naming convention (snake_case of the doc title, mirroring dv_deposit_account) and the doc's 'Daily (T-3)' running frequency -- no real Airflow DAG name, exact cron, or DAG URL was found in the source doc or its linked pages (the Order and Dependencies diagram shows program names, not a DAG id). Confirm the real DAG name and schedule before running -- see draft notes. This field is not read by create_pipeline_asset.py; remove before running."
+    }
+  ]
+}

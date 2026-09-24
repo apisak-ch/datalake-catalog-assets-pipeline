@@ -1,0 +1,122 @@
+{
+  "service": "hive",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod_unsafe_account_information",
+          "tables": [
+            {
+              "name": "loan",
+              "description": "Loan account details, balances, payments and status for all loan accounts owned by MyMo users, with account_number/auto_payment_account_number left as raw PII. Loaded daily (T-3) by datalake-dv-loan-processor from the cleansed dv_loan_account HDFS file, comparing current vs. previous-day data to keep only changed rows. Partitioned by daily_date. Available from 2023-05-14.",
+              "columns": [
+                { "name": "customer_id", "dataType": "STRING", "description": "Unique customer identifier" },
+                { "name": "account_number", "dataType": "STRING", "description": "PII -- raw (unhashed) loan account number, padded to 10 or 12 digits depending on account_group" },
+                { "name": "account_group", "dataType": "STRING", "description": "Account group code" },
+                { "name": "account_group_name", "dataType": "STRING", "description": "Description of account group" },
+                { "name": "account_type", "dataType": "STRING", "description": "Type code of loan account" },
+                { "name": "account_type_name", "dataType": "STRING", "description": "Name of loan account type" },
+                { "name": "account_subtype", "dataType": "STRING", "description": "Loan account subtype code" },
+                { "name": "account_subtype_name", "dataType": "STRING", "description": "Subtype description" },
+                { "name": "market_code", "dataType": "STRING", "description": "Market code" },
+                { "name": "market_code_name", "dataType": "STRING", "description": "Market name" },
+                { "name": "branch_code", "dataType": "STRING", "description": "Branch code where loan originated" },
+                { "name": "branch_code_name", "dataType": "STRING", "description": "Branch name" },
+                { "name": "account_status", "dataType": "STRING", "description": "Current loan status" },
+                { "name": "payment_calculation_method", "dataType": "STRING", "description": "Code for calculation method" },
+                { "name": "payment_calculation_method_name", "dataType": "STRING", "description": "Description of calculation method" },
+                { "name": "payment_frequency", "dataType": "STRING", "description": "Frequency of loan repayment" },
+                { "name": "provision_category", "dataType": "STRING", "description": "Provision category code" },
+                { "name": "provision_category_name", "dataType": "STRING", "description": "Description of provision category" },
+                { "name": "repayment_method", "dataType": "STRING", "description": "Repayment method code" },
+                { "name": "repayment_method_name", "dataType": "STRING", "description": "Description of repayment method" },
+                { "name": "loan_term", "dataType": "STRING", "description": "Total loan term" },
+                { "name": "contract_date", "dataType": "STRING", "description": "Date of loan contract" },
+                { "name": "draw_down_date", "dataType": "STRING", "description": "Initial drawdown date" },
+                { "name": "maturity_date", "dataType": "STRING", "description": "Date loan is due" },
+                { "name": "restructure_flag", "dataType": "STRING", "description": "'Y' if loan is restructured, else blank" },
+                { "name": "credit_limit", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Maximum credit available" },
+                { "name": "ending_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Current outstanding loan balance" },
+                { "name": "payment_amount", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Latest payment amount" },
+                { "name": "fixed_principal_amount", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Fixed principal component" },
+                { "name": "fixed_interest_amount", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Fixed interest component" },
+                { "name": "payment_date", "dataType": "STRING", "description": "Scheduled payment date" },
+                { "name": "last_payment_date", "dataType": "STRING", "description": "Last actual payment date" },
+                { "name": "late_charge_effective_date", "dataType": "STRING", "description": "Date late charges started" },
+                { "name": "late_charge_action_date", "dataType": "STRING", "description": "Date of action on late charges" },
+                { "name": "total_fee", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Total accumulated fees" },
+                { "name": "grand_total_due", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Total amount due" },
+                { "name": "penalty_charge", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Penalty amount applied" },
+                { "name": "interest_due", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Interest currently due" },
+                { "name": "aging_class", "dataType": "STRING", "description": "Classification of account aging" },
+                { "name": "auto_payment_account_number", "dataType": "STRING", "description": "PII -- raw (unhashed) linked auto-payment account number" },
+                { "name": "auto_payment_account_type", "dataType": "STRING", "description": "Type of linked account, derived during load from auto_payment_account_number's padded length (DDA if <=10 digits, SAV if >10)" },
+                { "name": "accrued_interest", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(12,5)", "description": "Interest accrued but not paid" },
+                { "name": "data_status", "dataType": "STRING", "description": "Record state flag: C = Created, U = Updated, D = Deleted / closed loan / deactivated user" },
+                { "name": "co_owner", "dataType": "STRING", "description": "Co-owner (if any)" },
+                { "name": "daily_date", "dataType": "STRING", "description": "Partition column, snapshot date in YYYY-MM-DD" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "prod_safe_account_information",
+          "tables": [
+            {
+              "name": "loan",
+              "description": "Loan account details, balances, payments and status for all loan accounts owned by MyMo users, PII-cleaned (account_number and auto_payment_account_number MD5-hashed). Loaded daily (T-3) by datalake-dv-loan-processor, same load step as the unsafe table. Partitioned by daily_date. Available from 2023-05-14. Source for the Loan Single View HBase aggregation.",
+              "columns": [
+                { "name": "customer_id", "dataType": "STRING", "description": "Unique customer identifier" },
+                { "name": "account_number", "dataType": "STRING", "description": "MD5-hashed (uppercase) loan account number -- PII removed, per Execution Process step 7 on the datalake-dv-loan-processor page (the Hive schema table itself doesn't call out the hashing -- see draft notes)" },
+                { "name": "account_group", "dataType": "STRING", "description": "Account group code" },
+                { "name": "account_group_name", "dataType": "STRING", "description": "Description of account group" },
+                { "name": "account_type", "dataType": "STRING", "description": "Type code of loan account" },
+                { "name": "account_type_name", "dataType": "STRING", "description": "Name of loan account type" },
+                { "name": "account_subtype", "dataType": "STRING", "description": "Loan account subtype code" },
+                { "name": "account_subtype_name", "dataType": "STRING", "description": "Subtype description" },
+                { "name": "market_code", "dataType": "STRING", "description": "Market code" },
+                { "name": "market_code_name", "dataType": "STRING", "description": "Market name" },
+                { "name": "branch_code", "dataType": "STRING", "description": "Branch code where loan originated" },
+                { "name": "branch_code_name", "dataType": "STRING", "description": "Branch name" },
+                { "name": "account_status", "dataType": "STRING", "description": "Current loan status" },
+                { "name": "payment_calculation_method", "dataType": "STRING", "description": "Code for calculation method" },
+                { "name": "payment_calculation_method_name", "dataType": "STRING", "description": "Description of calculation method" },
+                { "name": "payment_frequency", "dataType": "STRING", "description": "Frequency of loan repayment" },
+                { "name": "provision_category", "dataType": "STRING", "description": "Provision category code" },
+                { "name": "provision_category_name", "dataType": "STRING", "description": "Description of provision category" },
+                { "name": "repayment_method", "dataType": "STRING", "description": "Repayment method code" },
+                { "name": "repayment_method_name", "dataType": "STRING", "description": "Description of repayment method" },
+                { "name": "loan_term", "dataType": "STRING", "description": "Total loan term" },
+                { "name": "contract_date", "dataType": "STRING", "description": "Date of loan contract" },
+                { "name": "draw_down_date", "dataType": "STRING", "description": "Initial drawdown date" },
+                { "name": "maturity_date", "dataType": "STRING", "description": "Date loan is due" },
+                { "name": "restructure_flag", "dataType": "STRING", "description": "'Y' if loan is restructured, else blank" },
+                { "name": "credit_limit", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Maximum credit available" },
+                { "name": "ending_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Current outstanding loan balance" },
+                { "name": "payment_amount", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Latest payment amount" },
+                { "name": "fixed_principal_amount", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Fixed principal component" },
+                { "name": "fixed_interest_amount", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Fixed interest component" },
+                { "name": "payment_date", "dataType": "STRING", "description": "Scheduled payment date" },
+                { "name": "last_payment_date", "dataType": "STRING", "description": "Last actual payment date" },
+                { "name": "late_charge_effective_date", "dataType": "STRING", "description": "Date late charges started" },
+                { "name": "late_charge_action_date", "dataType": "STRING", "description": "Date of action on late charges" },
+                { "name": "total_fee", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Total accumulated fees" },
+                { "name": "grand_total_due", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Total amount due" },
+                { "name": "penalty_charge", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Penalty amount applied" },
+                { "name": "interest_due", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "Interest currently due" },
+                { "name": "aging_class", "dataType": "STRING", "description": "Classification of account aging" },
+                { "name": "auto_payment_account_number", "dataType": "STRING", "description": "MD5-hashed (uppercase) linked auto-payment account number -- PII removed, per Execution Process step 7 -- see draft notes on account_number above" },
+                { "name": "auto_payment_account_type", "dataType": "STRING", "description": "Type of linked account, derived during load from auto_payment_account_number's padded length (DDA if <=10 digits, SAV if >10)" },
+                { "name": "accrued_interest", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(12,5)", "description": "Interest accrued but not paid" },
+                { "name": "data_status", "dataType": "STRING", "description": "Record state flag: C = Created, U = Updated, D = Deleted / closed loan / deactivated user" },
+                { "name": "co_owner", "dataType": "STRING", "description": "Co-owner (if any)" },
+                { "name": "daily_date", "dataType": "STRING", "description": "Partition column, snapshot date in YYYY-MM-DD" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

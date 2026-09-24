@@ -1,0 +1,63 @@
+{
+  "service": "ftp-go-anywhere",
+  "containers": [
+    {
+      "name": "gsbmymo",
+      "prefix": "/gsbmymo/",
+      "description": "GoAnywhere MFT drop location, shared across multiple DV source files (e.g. MYMO_LOAN, MYMO_DEPOSIT) -- not exclusive to dv_loan_account."
+    },
+    {
+      "name": "mymo_loan",
+      "parentName": "gsbmymo",
+      "description": "Loan account information for all loan accounts owned by MyMo users, daily batch (T-3). File: MYMO_LOAN_YYYYMMDD.TXT, HDT format (H=header, D=detail rows, T=tail), pipe-separated.",
+      "dataModel": {
+        "columns": [
+          { "name": "part", "dataType": "STRING", "description": "H (header), D (detail), or T (tail) -- HDT file format marker. Source doc names this column 'part' rather than 'row_type' (as the sibling deposit-account file calls the same marker) -- kept verbatim, see draft notes." },
+          { "name": "version_date", "dataType": "STRING" },
+          { "name": "customer_id", "dataType": "STRING" },
+          { "name": "account_number", "dataType": "STRING", "description": "PII -- hashed with MD5 downstream in the safe Hive table. Max length 12; >=11 if account_group != DDA." },
+          { "name": "account_group", "dataType": "STRING" },
+          { "name": "account_group_name", "dataType": "STRING" },
+          { "name": "account_type", "dataType": "STRING" },
+          { "name": "account_type_name", "dataType": "STRING" },
+          { "name": "account_subtype", "dataType": "STRING" },
+          { "name": "account_subtype_name", "dataType": "STRING" },
+          { "name": "market_code", "dataType": "STRING" },
+          { "name": "market_code_name", "dataType": "STRING" },
+          { "name": "branch_code", "dataType": "STRING" },
+          { "name": "branch_code_name", "dataType": "STRING" },
+          { "name": "account_status", "dataType": "STRING" },
+          { "name": "payment_calculation_method", "dataType": "STRING" },
+          { "name": "payment_calculation_method_name", "dataType": "STRING" },
+          { "name": "payment_frequency", "dataType": "STRING" },
+          { "name": "provision_category", "dataType": "STRING" },
+          { "name": "provision_category_name", "dataType": "STRING" },
+          { "name": "repayment_method", "dataType": "STRING" },
+          { "name": "repayment_method_name", "dataType": "STRING" },
+          { "name": "loan_term", "dataType": "STRING" },
+          { "name": "contract_date", "dataType": "STRING" },
+          { "name": "draw_down_date", "dataType": "STRING" },
+          { "name": "maturity_date", "dataType": "STRING" },
+          { "name": "restructure_flag", "dataType": "STRING" },
+          { "name": "credit_limit", "dataType": "STRING", "description": "Numeric value stored as string. Source doc's schema table types this Decimal; typed STRING here at the raw-file level, matching the dv_deposit_account precedent -- see draft notes." },
+          { "name": "ending_balance", "dataType": "STRING", "description": "Numeric value stored as string -- see credit_limit note." },
+          { "name": "payment_amount", "dataType": "STRING", "description": "Numeric value stored as string -- see credit_limit note." },
+          { "name": "fixed_principal_amount", "dataType": "STRING", "description": "Numeric value stored as string -- see credit_limit note." },
+          { "name": "fixed_interest_amount", "dataType": "STRING", "description": "Numeric value stored as string -- see credit_limit note." },
+          { "name": "payment_date", "dataType": "STRING" },
+          { "name": "last_payment_date", "dataType": "STRING" },
+          { "name": "late_charge_effective_date", "dataType": "STRING" },
+          { "name": "late_charge_action_date", "dataType": "STRING" },
+          { "name": "total_fee", "dataType": "STRING", "description": "Numeric value stored as string -- see credit_limit note." },
+          { "name": "grand_total_due", "dataType": "STRING", "description": "Numeric value stored as string -- see credit_limit note." },
+          { "name": "penalty_charge", "dataType": "STRING", "description": "Numeric value stored as string -- see credit_limit note." },
+          { "name": "interest_due", "dataType": "STRING", "description": "Numeric value stored as string -- see credit_limit note." },
+          { "name": "aging_class", "dataType": "STRING" },
+          { "name": "auto_payment_account_number", "dataType": "STRING", "description": "PII -- hashed with MD5 downstream in the safe Hive table." },
+          { "name": "accrued_interest", "dataType": "STRING", "description": "Numeric value stored as string -- see credit_limit note." },
+          { "name": "co_owner", "dataType": "STRING", "description": "Comma-separated CIFs of joint-account co-owners, e.g. 22222,3333" }
+        ]
+      }
+    }
+  ]
+}
