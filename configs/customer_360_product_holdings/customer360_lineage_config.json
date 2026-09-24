@@ -1,0 +1,46 @@
+{
+  "edges": [
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hbase.prod.prod.customer-single-view"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.datalake.customer_360_cleansed.extract_customer_single_view_cleansed"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.customer_360_product_holdings"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.datalake.customer_360_cleansed.extract_customer_single_view_cleansed"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.customer_360_gold_safe.product_holdings_info_gold_safe"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.customer_360_product_holdings"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.customer_360_gold_safe.product_holdings_info_gold_safe"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "ftp-customer360.toCUSTOMER360.sales_suggestions"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.customer_360_product_holdings"
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "pipelines": [
+    {
+      "service": "airflow",
+      "name": "customer_360_product_holdings",
+      "displayName": "Customer 360 Product Holdings",
+      "description": "Daily (T-3) pipeline that builds the per-customer product-holdings extract for the Customer360 team. Four steps: 1) Check Status -- verify the upstream Deposit Single View and Loan Single View SUCCESS logs exist for the run date. 2) ETL -- Extractor program (datalake-hbase-extractor-spark) reads deposit/loan/user count fields from the shared customer-single-view HBase table into HDFS cleansed; Differentiator program (datalake-customer-360-differentiator-spark) compares current vs. previous cleansed extracts and keeps only changed rows (tagged create/update/delete internally, then written without that tag) into HDFS gold_safe. 3) Create Files -- add header/tail markers, gzip, and checksum the gold_safe output locally. 4) Send Files -- deliver the file and checksum to the datalake-side FTP drop (/toCUSTOMER360/sales_suggestions/), for a separate downstream job to relay onward via GoAnywhere. Technical user: tu_job_customer_sv.",
+      "sourceUrl": "http://10.82.100.19:8085/dags/customer_360_product_holdings/graph",
+      "scheduleInterval": "15 4 * * *"
+    }
+  ]
+}

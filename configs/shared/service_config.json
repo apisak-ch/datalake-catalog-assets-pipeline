@@ -44,6 +44,11 @@
       "kind": "storage",
       "name": "ftp-go-anywhere",
       "description": "Manual storage service for the GoAnywhere MFT source FTP server (/gsbmymo/), a DV (data vendor) drop location shared across multiple source files (e.g. MYMO_DEPOSIT, MYMO_LOAN), no live connector"
+    },
+    {
+      "kind": "storage",
+      "name": "ftp-customer360",
+      "description": "Manual storage service for the outbound Customer360 delivery drop (/toCUSTOMER360/, local disk path /data/customer360ftp/toCUSTOMER360/ on the FTP-datalake host). A separate downstream job (customer360ftp, not cataloged here) relays files from this drop onward to GoAnywhere (sftp_go_anywhere, /Insight/ToInsight/). No live connector."
     }
   ]
 }

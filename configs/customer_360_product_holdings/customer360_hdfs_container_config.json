@@ -1,0 +1,91 @@
+{
+  "service": "hdfs",
+  "containers": [
+    {
+      "name": "prod",
+      "prefix": "/prod/",
+      "description": "Root of the prod HDFS environment."
+    },
+    {
+      "name": "cleansed",
+      "parentName": "prod",
+      "prefix": "/prod/cleansed/",
+      "description": "Cleansed zone."
+    },
+    {
+      "name": "datalake",
+      "parentName": "cleansed",
+      "prefix": "/prod/cleansed/datalake/",
+      "description": "Datalake job outputs, grouped by job name."
+    },
+    {
+      "name": "customer_360_cleansed",
+      "displayName": "customer_360",
+      "parentName": "datalake",
+      "prefix": "/prod/cleansed/datalake/customer_360/",
+      "description": "Customer 360 job outputs under the cleansed zone."
+    },
+    {
+      "name": "extract_customer_single_view_cleansed",
+      "displayName": "extract_customer_single_view",
+      "parentName": "customer_360_cleansed",
+      "prefix": "/prod/cleansed/datalake/customer_360/extract_customer_single_view/",
+      "fileFormats": ["csv"],
+      "description": "Output of the datalake-hbase-extractor-spark program: per-customer product-holding counts read from the shared customer-single-view HBase table (deposit_account, loan_account, and user_info qualifier families), pipe-separated with header. Lands under a daily YYYYMMDD subfolder, inside a product_holdings_tmp_output/ working folder. Same 9-column schema as the gold_safe product_holdings_info output below -- the source doc's Extractor and Differentiator pages both point their 'Output Schema' section at the identical schema page, so this is stated equivalence, not an assumption.",
+      "dataModel": {
+        "columns": [
+          { "name": "customer_id", "dataType": "STRING", "description": "Customer CIF. Remark column in source schema: customer_id." },
+          { "name": "count_savings_account", "dataType": "INT", "description": "Remark column in source schema: deposit_account|count_saving_account. Note: the extractor's own app.properties COLUMNS_MAPPING names this field count_saving_account (singular) -- the schema table and the config disagree on the exact field name; kept as the schema table states it, see draft notes." },
+          { "name": "count_current_account", "dataType": "INT", "description": "Remark column in source schema: deposit_account|count_current_account." },
+          { "name": "count_fixed_deposit_account", "dataType": "INT", "description": "Remark column in source schema: deposit_account|count_fixed_deposit_account_wo_salak." },
+          { "name": "count_traditional_salak_account", "dataType": "INT", "description": "Remark column in source schema: deposit_account|count_traditional_salak_account." },
+          { "name": "count_digital_salak_account", "dataType": "INT", "description": "Remark column in source schema: deposit_account|count_digital_salak_account." },
+          { "name": "count_MyMo", "dataType": "INT", "description": "Remark column in source schema: user_info|count_MyMo. Note: the user_info qualifier family on the shared customer-single-view HBase table is not yet in that table's own catalog config (deliberately left out pending its own source pipeline) -- see draft notes." },
+          { "name": "count_active_housing_loan_account", "dataType": "INT", "description": "Remark column in source schema: loan_account|count_active_housing_loan_account." },
+          { "name": "count_other_loan_account", "dataType": "INT", "description": "Remark column in source schema: loan_account|count_loan_exclude_housing_loan." }
+        ]
+      }
+    },
+    {
+      "name": "gold_safe",
+      "parentName": "prod",
+      "prefix": "/prod/gold_safe/",
+      "description": "Gold safe zone."
+    },
+    {
+      "name": "datalake_gold_safe",
+      "displayName": "datalake",
+      "parentName": "gold_safe",
+      "prefix": "/prod/gold_safe/datalake/",
+      "description": "Datalake job outputs, grouped by job name."
+    },
+    {
+      "name": "customer_360_gold_safe",
+      "displayName": "customer_360",
+      "parentName": "datalake_gold_safe",
+      "prefix": "/prod/gold_safe/datalake/customer_360/",
+      "description": "Customer 360 job outputs under the gold_safe zone."
+    },
+    {
+      "name": "product_holdings_info_gold_safe",
+      "displayName": "product_holdings_info",
+      "parentName": "customer_360_gold_safe",
+      "prefix": "/prod/gold_safe/datalake/customer_360/product_holdings_info/",
+      "fileFormats": ["csv"],
+      "description": "Output of the datalake-customer-360-differentiator-spark program: delta (changed-only) rows versus the previous day's extract_customer_single_view file, pipe-separated without header. Same 9-column schema as extract_customer_single_view_cleansed above -- per the source doc's Execution Process, the differentiator internally adds a data_status (C/U/D) and daily_date column for its own compare logic, then explicitly drops the status column before the final write, so those two working columns are not part of the schema below.",
+      "dataModel": {
+        "columns": [
+          { "name": "customer_id", "dataType": "STRING", "description": "Customer CIF." },
+          { "name": "count_savings_account", "dataType": "INT", "description": "See extract_customer_single_view_cleansed for the same field-naming note." },
+          { "name": "count_current_account", "dataType": "INT" },
+          { "name": "count_fixed_deposit_account", "dataType": "INT" },
+          { "name": "count_traditional_salak_account", "dataType": "INT" },
+          { "name": "count_digital_salak_account", "dataType": "INT" },
+          { "name": "count_MyMo", "dataType": "INT" },
+          { "name": "count_active_housing_loan_account", "dataType": "INT" },
+          { "name": "count_other_loan_account", "dataType": "INT" }
+        ]
+      }
+    }
+  ]
+}

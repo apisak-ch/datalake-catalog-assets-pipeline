@@ -1,0 +1,31 @@
+{
+  "service": "ftp-customer360",
+  "containers": [
+    {
+      "name": "toCUSTOMER360",
+      "prefix": "/toCUSTOMER360/",
+      "description": "Root of the Customer360 outbound delivery area on this FTP drop."
+    },
+    {
+      "name": "sales_suggestions",
+      "parentName": "toCUSTOMER360",
+      "prefix": "/toCUSTOMER360/sales_suggestions/",
+      "fileFormats": ["csv"],
+      "description": "Daily delivery of the product-holdings extract: product_holdings_information_yyyymmdd.txt.gz + product_holdings_information_yyyymmdd.cksum. Same 9 fields as gold_safe product_holdings_info, with H (header) / D (detail) / T (tail) row-type markers added during this DAG's own Export File step. Confirmed against a real file (product_holdings_information_20260921) -- 9 fields, matching the schema table rather than the doc's own stale-looking sample-output block (which showed ~29 fields).",
+      "dataModel": {
+        "columns": [
+          { "name": "row_type", "dataType": "STRING", "description": "H (header, carries only the run date), D (detail), or T (tail, carries the row count) -- HDT file format marker." },
+          { "name": "customer_id", "dataType": "STRING" },
+          { "name": "count_savings_account", "dataType": "INT" },
+          { "name": "count_current_account", "dataType": "INT" },
+          { "name": "count_fixed_deposit_account", "dataType": "INT" },
+          { "name": "count_traditional_salak_account", "dataType": "INT" },
+          { "name": "count_digital_salak_account", "dataType": "INT" },
+          { "name": "count_MyMo", "dataType": "INT" },
+          { "name": "count_active_housing_loan_account", "dataType": "INT" },
+          { "name": "count_other_loan_account", "dataType": "INT" }
+        ]
+      }
+    }
+  ]
+}
