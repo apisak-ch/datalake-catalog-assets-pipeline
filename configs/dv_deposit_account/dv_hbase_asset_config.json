@@ -1,0 +1,70 @@
+{
+  "service": "hbase",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod",
+          "tables": [
+            {
+              "name": "customer-single-view",
+              "description": "Shared customer-360 HBase table. This config only models the deposit_account fields written by the Deposit Single View program (this pipeline) -- other pipelines/programs are expected to write other qualifiers under the same info family. Draft uses the 'customer360 version' schema from the source doc, which is broader than the doc's earlier 'version 1.0.1' schema -- see draft notes; confirm which is actually live before creating.",
+              "columns": [
+                {
+                  "name": "rowkey",
+                  "dataType": "STRUCT",
+                  "description": "Single row key shape: [customer_id].",
+                  "children": [
+                    {
+                      "name": "customer_id",
+                      "displayName": "[customer_id]",
+                      "dataType": "STRUCT",
+                      "description": "Row key is the customer's CIF.",
+                      "children": [
+                        {
+                          "name": "info",
+                          "dataType": "STRUCT",
+                          "description": "Column family.",
+                          "children": [
+                            {
+                              "name": "qualifier",
+                              "dataType": "STRUCT",
+                              "description": "Real qualifiers are compound (deposit_account|<field_name>); the field names below are the known business attributes written by the Deposit Single View program.",
+                              "children": [
+                                { "name": "total_traditional_salak_balance", "displayName": "deposit_account|total_traditional_salak_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_type in (3401, 3402) and account_status_code != 4" },
+                                { "name": "count_traditional_salak_account", "displayName": "deposit_account|count_traditional_salak_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_type in (3401, 3402) and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_digital_salak_balance", "displayName": "deposit_account|total_digital_salak_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_type = 3403 and account_status_code != 4" },
+                                { "name": "count_digital_salak_account", "displayName": "deposit_account|count_digital_salak_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_type = 3403 and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "count_total_deposit_account", "displayName": "deposit_account|count_total_deposit_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_group in (DDA, SAV, CD) and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_deposit_account_balance", "displayName": "deposit_account|total_deposit_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_group in (DDA, SAV, CD) and account_status_code != 4" },
+                                { "name": "count_savings_account", "displayName": "deposit_account|count_savings_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_group = SAV and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_savings_account_balance", "displayName": "deposit_account|total_savings_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_group = SAV and account_status_code != 4" },
+                                { "name": "count_fixed_deposit_account", "displayName": "deposit_account|count_fixed_deposit_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_group = CD and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_fixed_deposit_account_balance", "displayName": "deposit_account|total_fixed_deposit_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_group = CD and account_status_code != 4" },
+                                { "name": "count_current_account", "displayName": "deposit_account|count_current_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_group = DDA and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_current_account_balance", "displayName": "deposit_account|total_current_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_group = DDA and account_status_code != 4" },
+                                { "name": "total_closed_account", "displayName": "deposit_account|total_closed_account", "dataType": "INT", "description": "count where account_status_code = 4" },
+                                { "name": "count_jount_for_children", "displayName": "deposit_account|count_jount_for_children", "dataType": "INT", "description": "count(account_number) where relationship_code = E and account_status_code != 4. Field name has a typo in the source doc (\"jount\"); kept verbatim to match the real qualifier -- see draft notes. Also note: relationship_code = E doesn't appear in this pipeline's own relationship_code definitions (A/B/C) -- see draft notes." },
+                                { "name": "has_joint_for_children", "displayName": "deposit_account|has_joint_for_children", "dataType": "INT", "description": "1 if count_jount_for_children > 0, else 0" },
+                                { "name": "count_special_savings_account", "displayName": "deposit_account|count_special_savings_account", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "count(account_number) where account_type = 2002 and account_status_code != 4. Source doc types this as decimal, not int -- see draft notes." },
+                                { "name": "total_special_savings_account_balance", "displayName": "deposit_account|total_special_savings_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_type = 2002 and account_status_code != 4" },
+                                { "name": "count_monthly_fixed_deposit_account", "displayName": "deposit_account|count_monthly_fixed_deposit_account", "dataType": "INT", "description": "count(account_number) where account_type = 3301 and account_status_code != 4" },
+                                { "name": "total_monthly_fixed_deposit_account_balance", "displayName": "deposit_account|total_monthly_fixed_deposit_account_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)", "description": "sum(ending_balance) where account_type = 3301 and account_status_code != 4" },
+                                { "name": "data_date", "displayName": "deposit_account|data_date", "dataType": "STRING", "description": "Data date of the source year_month partition read" }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

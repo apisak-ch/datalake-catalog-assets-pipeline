@@ -1,0 +1,86 @@
+{
+  "service": "hdfs",
+  "containers": [
+    {
+      "name": "prod",
+      "prefix": "/prod/",
+      "description": "Root of the prod HDFS environment."
+    },
+    {
+      "name": "raw",
+      "parentName": "prod",
+      "prefix": "/prod/raw/",
+      "description": "Raw zone: straight from FTP, no transform."
+    },
+    {
+      "name": "dv_raw",
+      "displayName": "dv",
+      "parentName": "raw",
+      "prefix": "/prod/raw/dv/",
+      "description": "DV (data vendor) source files, shared category folder covering more than just deposit account data (e.g. a sibling loan account information file is referenced in this pipeline's source doc) -- not exclusive to dv_deposit_account."
+    },
+    {
+      "name": "deposit_account_information_raw",
+      "displayName": "deposit_account_information",
+      "parentName": "dv_raw",
+      "prefix": "/prod/raw/dv/deposit_account_information/",
+      "description": "Raw copy of MYMO_DEPOSIT_YYYYMMDD.TXT straight from FTP, before validation. Files land under a daily YYYYMMDD subfolder.",
+      "dataModel": {
+        "columns": [
+          { "name": "row_type", "dataType": "STRING", "description": "H (header), D (detail), or T (tail) -- HDT file format marker" },
+          { "name": "customer_id", "dataType": "STRING", "description": "CIF" },
+          { "name": "mymo_status", "dataType": "STRING" },
+          { "name": "account_type", "dataType": "STRING", "description": "e.g. 3401, 3402, 3403, 2001, 2002, 3301" },
+          { "name": "account_type_description", "dataType": "STRING" },
+          { "name": "account_open_date", "dataType": "STRING" },
+          { "name": "account_status_code", "dataType": "STRING", "description": "4 = closed" },
+          { "name": "account_status_description", "dataType": "STRING" },
+          { "name": "ending_balance", "dataType": "STRING", "description": "Numeric value stored as string, e.g. 30000.000000" },
+          { "name": "account_group", "dataType": "STRING", "description": "DDA, SAV, or CD. Corrected from the source doc's stated Decimal type -- see draft notes." },
+          { "name": "account_close_date", "dataType": "STRING" },
+          { "name": "account_number", "dataType": "STRING", "description": "PII -- hashed with MD5 downstream in the safe Hive table." },
+          { "name": "co_owner", "dataType": "STRING", "description": "Comma-separated CIFs of joint-account co-owners, e.g. 22222,3333" },
+          { "name": "relationship_code", "dataType": "STRING", "description": "A = single, B = or, C = and" }
+        ]
+      }
+    },
+    {
+      "name": "cleansed",
+      "parentName": "prod",
+      "prefix": "/prod/cleansed/",
+      "description": "Cleansed zone."
+    },
+    {
+      "name": "dv_cleansed",
+      "displayName": "dv",
+      "parentName": "cleansed",
+      "prefix": "/prod/cleansed/dv/",
+      "description": "DV (data vendor) source files, shared category folder -- not exclusive to dv_deposit_account."
+    },
+    {
+      "name": "deposit_account_information_cleansed",
+      "displayName": "deposit_account_information",
+      "parentName": "dv_cleansed",
+      "prefix": "/prod/cleansed/dv/deposit_account_information/",
+      "description": "Cleansed copy of the raw file, no column-level transform -- the FTP-Validator step only validates and moves the file from raw to cleansed. Same schema as the raw file. Files land under a daily YYYYMMDD subfolder.",
+      "dataModel": {
+        "columns": [
+          { "name": "row_type", "dataType": "STRING", "description": "H (header), D (detail), or T (tail) -- HDT file format marker" },
+          { "name": "customer_id", "dataType": "STRING", "description": "CIF" },
+          { "name": "mymo_status", "dataType": "STRING" },
+          { "name": "account_type", "dataType": "STRING", "description": "e.g. 3401, 3402, 3403, 2001, 2002, 3301" },
+          { "name": "account_type_description", "dataType": "STRING" },
+          { "name": "account_open_date", "dataType": "STRING" },
+          { "name": "account_status_code", "dataType": "STRING", "description": "4 = closed" },
+          { "name": "account_status_description", "dataType": "STRING" },
+          { "name": "ending_balance", "dataType": "STRING", "description": "Numeric value stored as string, e.g. 30000.000000" },
+          { "name": "account_group", "dataType": "STRING", "description": "DDA, SAV, or CD. Corrected from the source doc's stated Decimal type -- see draft notes." },
+          { "name": "account_close_date", "dataType": "STRING" },
+          { "name": "account_number", "dataType": "STRING", "description": "PII -- hashed with MD5 downstream in the safe Hive table." },
+          { "name": "co_owner", "dataType": "STRING", "description": "Comma-separated CIFs of joint-account co-owners, e.g. 22222,3333" },
+          { "name": "relationship_code", "dataType": "STRING", "description": "A = single, B = or, C = and" }
+        ]
+      }
+    }
+  ]
+}

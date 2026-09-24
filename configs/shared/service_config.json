@@ -39,6 +39,11 @@
       "kind": "storage",
       "name": "ftp-k8s",
       "description": "Manual storage service for tracking files delivered to downstream k8s-hosted FTP processors (mymo_processor, secure_plus_processor, ...), no live connector"
+    },
+    {
+      "kind": "storage",
+      "name": "ftp-go-anywhere",
+      "description": "Manual storage service for the GoAnywhere MFT source FTP server (/gsbmymo/), a DV (data vendor) drop location shared across multiple source files (e.g. MYMO_DEPOSIT, MYMO_LOAN), no live connector"
     }
   ]
 }

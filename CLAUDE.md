@@ -17,6 +17,7 @@ is created/updated by writing a JSON config and running the matching
 | `hive` | database | CustomDatabase | manual, no live connector (see naming below) |
 | `ftp-mymo` | storage | CustomStorage | inbound: MyMo-dedicated source FTP (`/data/prod/file/mymo/ToLAKE/`) |
 | `ftp-k8s` | storage | CustomStorage | outbound: delivery to downstream k8s processors (`/delta/datasource/`) |
+| `ftp-go-anywhere` | storage | CustomStorage | inbound: GoAnywhere MFT DV (data vendor) drop, shared across multiple source files (`/gsbmymo/`) |
 
 Separate FTP servers get separate services, since the service is the only
 place host/connection info has a structured home — merging two hosts into

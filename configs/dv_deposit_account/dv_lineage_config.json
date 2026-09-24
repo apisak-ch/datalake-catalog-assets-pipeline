@@ -1,0 +1,74 @@
+{
+  "edges": [
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "ftp-go-anywhere.gsbmymo.mymo_deposit"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.raw.dv_raw.deposit_account_information_raw"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.dv_deposit_account"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.raw.dv_raw.deposit_account_information_raw"
+      },
+      "toEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.dv_cleansed.deposit_account_information_cleansed"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.dv_deposit_account"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.dv_cleansed.deposit_account_information_cleansed"
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_unsafe_account_information.deposit"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.dv_deposit_account"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "container",
+        "fqn": "hdfs.prod.cleansed.dv_cleansed.deposit_account_information_cleansed"
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_account_information.deposit"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.dv_deposit_account"
+      }
+    },
+    {
+      "fromEntity": {
+        "type": "table",
+        "fqn": "hive.prod.prod_safe_account_information.deposit"
+      },
+      "toEntity": {
+        "type": "table",
+        "fqn": "hbase.prod.prod.customer-single-view"
+      },
+      "pipeline": {
+        "type": "pipeline",
+        "fqn": "airflow.dv_deposit_account"
+      }
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "service": "hive",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod_unsafe_account_information",
+          "tables": [
+            {
+              "name": "deposit",
+              "description": "Deposit account information for all MyMo-linked deposit accounts, transformed but with account_number left as raw PII. Loaded monthly (T-3, on the 3rd) from the cleansed dv_deposit_account HDFS file. Partitioned by year_month.",
+              "columns": [
+                { "name": "customer_id", "dataType": "STRING", "description": "CIF" },
+                { "name": "mymo_status", "dataType": "STRING" },
+                { "name": "account_type", "dataType": "STRING", "description": "e.g. 3401, 3402, 3403, 2001, 2002, 3301" },
+                { "name": "account_type_description", "dataType": "STRING" },
+                { "name": "account_open_date", "dataType": "STRING" },
+                { "name": "account_status_code", "dataType": "STRING", "description": "4 = closed" },
+                { "name": "account_status_description", "dataType": "STRING" },
+                { "name": "ending_balance", "dataType": "STRING", "description": "Numeric value stored as string" },
+                { "name": "account_group", "dataType": "STRING", "description": "DDA, SAV, or CD. Corrected from the source doc's stated Decimal type -- see draft notes." },
+                { "name": "account_close_date", "dataType": "STRING" },
+                { "name": "account_number", "dataType": "STRING", "description": "PII -- raw (unhashed) account number, padded to 10 or 12 digits depending on account_group" },
+                { "name": "co_owner", "dataType": "STRING", "description": "Comma-separated CIFs of joint-account co-owners" },
+                { "name": "relationship_code", "dataType": "STRING", "description": "A = single, B = or, C = and" },
+                { "name": "year_month", "dataType": "STRING", "description": "Partition column, YYYY-MM of the data date" }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "prod_safe_account_information",
+          "tables": [
+            {
+              "name": "deposit",
+              "description": "Deposit account information for all MyMo-linked deposit accounts, PII-cleaned (account_number hashed). Loaded monthly (T-3, on the 3rd) from the cleansed dv_deposit_account HDFS file, same load step as the unsafe table. Partitioned by year_month. Source for the Deposit Single View HBase aggregation.",
+              "columns": [
+                { "name": "customer_id", "dataType": "STRING", "description": "CIF" },
+                { "name": "mymo_status", "dataType": "STRING" },
+                { "name": "account_type", "dataType": "STRING", "description": "e.g. 3401, 3402, 3403, 2001, 2002, 3301" },
+                { "name": "account_type_description", "dataType": "STRING" },
+                { "name": "account_open_date", "dataType": "STRING" },
+                { "name": "account_status_code", "dataType": "STRING", "description": "4 = closed" },
+                { "name": "account_status_description", "dataType": "STRING" },
+                { "name": "ending_balance", "dataType": "STRING", "description": "Numeric value stored as string" },
+                { "name": "account_group", "dataType": "STRING", "description": "DDA, SAV, or CD. Corrected from the source doc's stated Decimal type -- see draft notes." },
+                { "name": "account_close_date", "dataType": "STRING" },
+                { "name": "account_number", "dataType": "STRING", "description": "MD5-hashed (uppercase) account number -- PII removed" },
+                { "name": "co_owner", "dataType": "STRING", "description": "Comma-separated CIFs of joint-account co-owners" },
+                { "name": "relationship_code", "dataType": "STRING", "description": "A = single, B = or, C = and" },
+                { "name": "year_month", "dataType": "STRING", "description": "Partition column, YYYY-MM of the data date" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

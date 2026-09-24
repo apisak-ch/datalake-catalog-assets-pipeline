@@ -1,0 +1,12 @@
+{
+  "pipelines": [
+    {
+      "service": "airflow",
+      "name": "dv_deposit_account",
+      "displayName": "DV Deposit Account",
+      "description": "Monthly (3rd of month, T-3) pipeline collecting deposit account information for all MyMo-linked deposit accounts. Four steps: 1) FTP -- retrieve MYMO_DEPOSIT_YYYYMMDD.TXT and do basic validation (header date, tail row count), land in HDFS raw. 2) Validation -- Spark validator checks column count/types/duplicates/nulls, moves file to HDFS cleansed. 3) Transformation -- Spark processor reads the cleansed file, writes an unsafe (raw PII) and a safe (MD5-hashed account_number) Hive table. 4) Aggregation -- Spark job reads the safe Hive table and writes aggregated per-customer deposit fields into the shared customer-single-view HBase table.",
+      "sourceUrl": "http://10.81.90.151:8085/dags/dv_deposit_account/graph",
+      "scheduleInterval": "5 3 3 * *"
+    }
+  ]
+}
