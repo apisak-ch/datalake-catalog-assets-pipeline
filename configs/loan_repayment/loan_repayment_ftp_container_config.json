@@ -1,0 +1,45 @@
+{
+  "service": "ftp-tableau",
+  "containers": [
+    {
+      "name": "data",
+      "prefix": "/data/",
+      "description": "Root of the FTP server."
+    },
+    {
+      "name": "tableau",
+      "parentName": "data",
+      "prefix": "/data/tableau/",
+      "description": "Tableau dashboard delivery area."
+    },
+    {
+      "name": "prod",
+      "parentName": "tableau",
+      "prefix": "/data/tableau/prod/",
+      "description": "Prod environment."
+    },
+    {
+      "name": "files",
+      "parentName": "prod",
+      "prefix": "/data/tableau/prod/files/",
+      "description": "Delivery drop for dashboard-ready files. Modeled as shared across pipelines, matching this project's convention for every other generically-named real path segment (ToLAKE, mymo, dv_raw, delta/datasource, ...) -- not independently confirmed for this path, since the source doc only names this one pipeline's use of it."
+    },
+    {
+      "name": "loan_repayment_tracking",
+      "parentName": "files",
+      "fileFormats": ["tsv"],
+      "description": "Daily (T-3) gzipped delivery of the loan repayment tracking summary: daily_loan_aging_class_summary_yyyymmdd.tsv.gz. Same content as the HDFS gold_safe loan_repayment_tracking output -- assumed same schema, not independently confirmed.",
+      "dataModel": {
+        "columns": [
+          { "name": "product", "dataType": "STRING", "description": "Loan product code, taken from account_subtype_name on the loan account information input." },
+          { "name": "date", "dataType": "DATE", "description": "Key partition." },
+          { "name": "loan_class", "dataType": "STRING", "description": "1-5, or Closed when loan_status is deactivate." },
+          { "name": "number_of_accounts_current", "dataType": "INT", "description": "Count of accounts in this product/loan_class for the current calendar month." },
+          { "name": "number_of_accounts_previous_month", "dataType": "INT", "description": "Count of accounts in this product/loan_class for the previous calendar month." },
+          { "name": "average_acs_score_current", "dataType": "DECIMAL", "description": "Average current_credit_score for this product/loan_class in the current calendar month." },
+          { "name": "average_ace_score_when_apply", "dataType": "DECIMAL", "description": "Average score at time of application for this product/loan_class. See draft notes on the HDFS gold_safe container: the source doc names/computes this field inconsistently between its execution-logic text and its own output-schema table." }
+        ]
+      }
+    }
+  ]
+}

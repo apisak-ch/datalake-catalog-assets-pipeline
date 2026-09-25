@@ -1,0 +1,45 @@
+{
+  "service": "hive",
+  "databases": [
+    {
+      "name": "prod",
+      "schemas": [
+        {
+          "name": "prod_safe_loan_repayment",
+          "tables": [
+            {
+              "name": "loan_aging_class_tracking",
+              "description": "Daily (T-3) loan repayment tracking results for every digital loan customer with active MyMo status, keyed by customer_id/account_number and partitioned by daily_date. Written by the loan_repayment pipeline's Loan Aging Class Tracking Spark step, joining loan tracking (HDFS cleansed csv, loan_origination_tracking) with loan account information (Hive prod_safe_account_information.loan, dv_loan_account) by customer_id and account_number (inner join).",
+              "columns": [
+                { "name": "customer_id", "dataType": "STRING", "description": "Primary key. Renamed from cif on the loan tracking input during pre-processing." },
+                { "name": "daily_date", "dataType": "DATE", "description": "Key partition (T-3)." },
+                { "name": "account_number", "dataType": "STRING", "description": "Primary key. Carried through from the safe (MD5-hashed) DV loan account table." },
+                { "name": "account_group", "dataType": "STRING" },
+                { "name": "account_group_name", "dataType": "STRING" },
+                { "name": "account_type", "dataType": "STRING" },
+                { "name": "account_type_name", "dataType": "STRING" },
+                { "name": "account_subtype", "dataType": "STRING" },
+                { "name": "account_subtype_name", "dataType": "STRING" },
+                { "name": "market_code", "dataType": "STRING" },
+                { "name": "market_code_name", "dataType": "STRING" },
+                { "name": "account_status", "dataType": "STRING", "description": "0 = active/new, 4 = deactivate." },
+                { "name": "contract_date", "dataType": "STRING" },
+                { "name": "maturity_date", "dataType": "STRING" },
+                { "name": "credit_limit", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)" },
+                { "name": "ending_balance", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)" },
+                { "name": "payment_amount", "dataType": "DECIMAL", "dataTypeDisplay": "decimal(18,2)" },
+                { "name": "payment_date", "dataType": "STRING" },
+                { "name": "last_payment_date", "dataType": "STRING" },
+                { "name": "aging_class", "dataType": "STRING", "description": "1-5, or Undefined when the source aging_class was null." },
+                { "name": "mymo_user_status", "dataType": "STRING", "description": "C, U, or D. Renamed from data_status on the DV loan (Hive) input." },
+                { "name": "loan_status", "dataType": "STRING", "description": "Derived from account_status and contract age: new (account_status=0, age<1 day), active (account_status=0, age>=1 day), or deactivate (account_status=4)." },
+                { "name": "credit_score", "dataType": "DECIMAL" },
+                { "name": "current_credit_score", "dataType": "DECIMAL" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

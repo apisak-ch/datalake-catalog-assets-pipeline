@@ -1,0 +1,12 @@
+{
+  "pipelines": [
+    {
+      "service": "airflow",
+      "name": "loan_repayment",
+      "displayName": "Loan Repayment",
+      "description": "Daily (T-3) pipeline that redesigns the original loan repayment tracking program to give the same output via a reusable framework method, feeding the loan repayment tracking dashboard. Step 1 (Loan Aging Class Tracking, Spark): joins loan tracking (HDFS cleansed csv from the loan_origination_tracking pipeline) with loan account information (Hive prod_safe_account_information.loan, from dv_loan_account) by customer_id and account_number, and writes the result to Hive (prod_safe_loan_repayment.loan_aging_class_tracking). Step 2 (Loan Repayment Tracking, Spark): aggregates that Hive table by product and loan_class into a daily summary, written to HDFS gold_safe. Step 3 (Export File, Shell): copies the gold_safe file to local disk, gzips it, and delivers it to the dashboard's PSQL FTP path.",
+      "sourceUrl": "http://10.82.100.19:8085/dags/loan_repayment/graph",
+      "_comment_unconfirmed": "No exact cron/scheduleInterval is stated in the source doc -- only 'Daily (T-3)' and that it runs after its upstream loan_origination_tracking dependency (~6:00 AM, 10 minutes). Not read by create_pipeline_asset.py; remove before running."
+    }
+  ]
+}

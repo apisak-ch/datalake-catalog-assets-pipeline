@@ -1,0 +1,19 @@
+{
+  "edges": [
+    {
+      "fromEntity": { "type": "table", "fqn": "hive.prod.prod_safe_account_information.loan" },
+      "toEntity": { "type": "table", "fqn": "hive.prod.prod_safe_loan_repayment.loan_aging_class_tracking" },
+      "pipeline": { "type": "pipeline", "fqn": "airflow.loan_repayment" }
+    },
+    {
+      "fromEntity": { "type": "table", "fqn": "hive.prod.prod_safe_loan_repayment.loan_aging_class_tracking" },
+      "toEntity": { "type": "container", "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.loan_repayment_tracking_gold_safe" },
+      "pipeline": { "type": "pipeline", "fqn": "airflow.loan_repayment" }
+    },
+    {
+      "fromEntity": { "type": "container", "fqn": "hdfs.prod.gold_safe.datalake_gold_safe.loan_repayment_tracking_gold_safe" },
+      "toEntity": { "type": "container", "fqn": "ftp-tableau.data.tableau.prod.files.loan_repayment_tracking" },
+      "pipeline": { "type": "pipeline", "fqn": "airflow.loan_repayment" }
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "service": "hdfs",
+  "containers": [
+    {
+      "name": "prod",
+      "prefix": "/prod/",
+      "description": "Root of the prod HDFS environment."
+    },
+    {
+      "name": "gold_safe",
+      "parentName": "prod",
+      "prefix": "/prod/gold_safe/",
+      "description": "Staging copy of cleansed output, immediately before Hive load."
+    },
+    {
+      "name": "datalake_gold_safe",
+      "displayName": "datalake",
+      "parentName": "gold_safe",
+      "prefix": "/prod/gold_safe/datalake/",
+      "description": "Datalake job outputs, grouped by job name."
+    },
+    {
+      "name": "loan_repayment_tracking_gold_safe",
+      "displayName": "loan_repayment_tracking",
+      "parentName": "datalake_gold_safe",
+      "prefix": "/prod/gold_safe/datalake/loan_repayment_tracking/",
+      "fileFormats": ["tsv"],
+      "description": "Daily (T-3) loan repayment tracking summary, aggregated by product and loan_class, written directly here (tab-separated) by the loan_repayment pipeline's Loan Repayment Tracking Spark step -- before being copied to local disk, gzipped, and delivered to the dashboard. Files land under a daily YYYYMMDD subfolder.",
+      "dataModel": {
+        "columns": [
+          { "name": "product", "dataType": "STRING", "description": "Loan product code, taken from account_subtype_name on the loan account information input." },
+          { "name": "date", "dataType": "DATE", "description": "Key partition." },
+          { "name": "loan_class", "dataType": "STRING", "description": "1-5, or Closed when loan_status is deactivate." },
+          { "name": "number_of_accounts_current", "dataType": "INT", "description": "Count of accounts in this product/loan_class for the current calendar month." },
+          { "name": "number_of_accounts_previous_month", "dataType": "INT", "description": "Count of accounts in this product/loan_class for the previous calendar month." },
+          { "name": "average_acs_score_current", "dataType": "DECIMAL", "description": "Average current_credit_score for this product/loan_class in the current calendar month." },
+          { "name": "average_ace_score_when_apply", "dataType": "DECIMAL", "description": "Average score at time of application for this product/loan_class. See draft notes: the source doc's execution-logic text calls this average_acs_score_when_apply (vs. average_ace_score_when_apply in its own output-schema table), and computes it from current_credit_score -- the same field used for average_acs_score_current -- which looks like it may be a doc error for credit_score." }
+        ]
+      }
+    }
+  ]
+}

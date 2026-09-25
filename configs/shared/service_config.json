@@ -49,6 +49,11 @@
       "kind": "storage",
       "name": "ftp-customer360",
       "description": "Manual storage service for the outbound Customer360 delivery drop (/toCUSTOMER360/, local disk path /data/customer360ftp/toCUSTOMER360/ on the FTP-datalake host). A separate downstream job (customer360ftp, not cataloged here) relays files from this drop onward to GoAnywhere (sftp_go_anywhere, /Insight/ToInsight/). No live connector."
+    },
+    {
+      "kind": "storage",
+      "name": "ftp-tableau",
+      "description": "Manual storage service for the outbound Tableau dashboard delivery drop (/data/tableau/prod/files/), where datalake jobs deliver dashboard-ready files. Reached via the sftp_tableau Airflow connection (instdlake@172.34.0.54 in UAT -- the PROD value is blank in the source doc). No live connector."
     }
   ]
 }
